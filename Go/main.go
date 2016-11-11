@@ -12,7 +12,7 @@ const (
 	// Maximum N for machine is (1 << 13)
 	N = 1 << 11
 
-	Vp = 32
+	Vp = 1 << 10
 )
 
 var (
@@ -84,10 +84,10 @@ func main() {
 	<-finish
 
 	dur := w.Reset()
-	// sec := dur.Seconds()
-	// fmt.Printf("[Time] : %0.3f sec \n", sec)
-	nano := dur.Nanoseconds()
-	fmt.Printf("[Time] : %d ns \n", nano)
+	sec := dur.Seconds()
+	fmt.Printf("[Time] : %0.3f sec \n", sec)
+	// nano := dur.Nanoseconds()
+	// fmt.Printf("[Time] : %d ns \n", nano)
 
 	// for i := 0; i < N; i++ { //sub-diagonal of j=i+d
 	// 	for j := 0; j < N; j++ {
