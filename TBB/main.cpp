@@ -40,16 +40,18 @@ public:
         }
         else {
             long x, y;
+            FiboTask* a = new(allocate_child()) FiboTask(n - 1, &x);
             FiboTask* b = new(allocate_child()) FiboTask(n - 2, &y);
             // Set ref_count to 'two children plus one for the wait".
-            set_ref_count(1);
+            set_ref_count(2);
             // Start b running.
             spawn(*b);
+            wait_for_all();
             // Start a running and wait for all children (a and b).
             //spawn_and_wait_for_all(a);
             // Do the sum
             *sum = x + y;
-            return new FiboTask(n - 1, &x);
+            return a;
         }
         //std::cout << this->ref_count() << "\n";
         return nullptr;
