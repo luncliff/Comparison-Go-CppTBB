@@ -161,6 +161,9 @@
     <Library Include="..\lib\tbb2017\lib\intel64\vc14\tbb_preview.lib" />
     <Library Include="..\lib\tbb2017\lib\intel64\vc14\tbb_preview_debug.lib" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\TBB\DagTask.hpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

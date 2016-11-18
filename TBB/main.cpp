@@ -2,75 +2,79 @@
 #include <thread>
 
 #include <tbb\task.h>
+#include "./DagTask.hpp"
 
 using namespace std;
 using namespace tbb;
 
-long SerialFib(long n) {
-    if (n < 2)
-        return n;
-    else
-        return SerialFib(n - 1) + SerialFib(n - 2);
-}
+template <typename T>
+struct Matrix
+{
+    T** pp;
+    
 
+    Matrix(T** _pp = nullptr) : pp{_pp}
+    {}
 
-
-class FiboTask : public task {
-
-public:
-    const long n;
-    long* const sum;
-
-    FiboTask(long n_, long* sum_) :
-        n(n_), sum(sum_)
+    operator T**() noexcept 
     {
-        //std::cout << this->ref_count() << "\n";
-
-        //std::this_thread::get_id();
-        //std::cout << std::this_thread::get_id() << ": ctor" << std::endl;
-    }
-
-    // Overrides virtual function task::execute
-    task* execute() override 
-    {      
-        //std::cout << std::this_thread::get_id() << "\n";
-
-        if (n < 2) {
-            *sum = SerialFib(n);
-        }
-        else {
-            long x, y;
-            FiboTask* a = new(allocate_child()) FiboTask(n - 1, &x);
-            FiboTask* b = new(allocate_child()) FiboTask(n - 2, &y);
-            // Set ref_count to 'two children plus one for the wait".
-            set_ref_count(2);
-            // Start b running.
-            spawn(*b);
-            wait_for_all();
-            // Start a running and wait for all children (a and b).
-            //spawn_and_wait_for_all(a);
-            // Do the sum
-            *sum = x + y;
-            return a;
-        }
-        //std::cout << this->ref_count() << "\n";
-        return nullptr;
+        return pp;
     }
 };
 
+static double Evaluate(int vp) 
+{
+    int     n;
+    double  *prob;
 
-long ParallelFib(long n) {
-    long sum;
-    FiboTask& a = *new(task::allocate_root()) FiboTask(n, &sum);
-    task::spawn_root_and_wait(a);
-    return sum;
+    //double  **cost;
+    //int     **root;
+    Matrix<double> cost;
+    Matrix<int> root;
+
+
+    // Matrix of DagTask*
+    //DagTask*** x; 
+    Matrix<DagTask*> x;
+
+    // ...
+    //allocate,initialize arrays cost,root,prob 
+    // ... 
+
+    //create tasks 
+    for (int d = 0; d < vp; d++) {
+        for (int i = 0; i + d < vp; i++)
+        {
+            // DagTask allocation with placement `new`
+            x[i][i + d] = 
+                new(tbb::task::allocate_root()) 
+                DagTask{ i, i + d, vp, n, prob, cost, root };
+
+            x[i][i + d]->set_ref_count(d == 0 ? 0 : 2);
+        }
+    }
+
+    //set up successor links and front link 
+    for (int d = 0; d < vp; d++){
+        for (int i = 0; i + d < vp; i++)
+        {
+            // up 
+            x[i][i + d]->successor[0] = i - 1 > -1 ? x[i - 1][i + d] : NULL;
+            // right 
+            x[i][i + d]->successor[1] = i + d + 1 < vp ? x[i][i + d + 1] : NULL;
+
+            //main diagonal 
+            if (d == 0 && i < vp - 1)
+                x[i][i + d]->a = x[i + 1][i + 1];
+        }
+    }
+                
+    x[0][vp-1]->increment_ref_count(); 
+    x[0][vp-1]->spawn_and_wait_for_all(*x[0][0]); 
+    x[0][vp-1]->execute(); 
+    tbb::task::destroy(*x[0][vp-1]); 
+            
+    return cost[0][n]; 
 }
 
 
-int main() {
-    //std::cout << std::thread::hardware_concurrency() << std::endl;;
-    ParallelFib(3);
-    //std::cout << SerialFib(4) << "\n";
-
-    return std::system("pause");
-}

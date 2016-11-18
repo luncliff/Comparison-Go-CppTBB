@@ -125,4 +125,9 @@
       <Filter>lib\tbb2017\lib\vc14</Filter>
     </Library>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\TBB\DagTask.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>
