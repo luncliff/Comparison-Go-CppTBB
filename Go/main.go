@@ -2,103 +2,113 @@ package main
 
 import (
 	"fmt"
-	"math"
-	"math/rand"
+	"io"
+	"obst"
+	"os"
 	"runtime"
 	"watch"
 )
 
-const (
-	// Problem Size
-	// Maximum N for machine is (1 << 13)
-	N = 1 << 11
+// ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 
-	// Tile Size
-	VP = 1 << 11
-)
+// Environment ...
+//  	Test data
+type Environment struct {
+	// N  : Problem's size
+	// NP : Number of processors
+	// VP : Chunk size
+	N, NP, VP int
 
-var (
-	h, v   [VP][VP]chan int
+	// Channel matrix for sychronizatin
+	h, v [][]chan int
+	// Channel to notify finish
 	finish chan int
-
-	cost [N + 1][N + 1]float64
-	root [N + 1][N + 1]int
-	prob [N]float64
-)
-
-func main() {
-
-	// Number of Physical Processer
-	NP := runtime.NumCPU()
-	runtime.GOMAXPROCS(NP)
-
-	fmt.Printf("[Proc] : %d \n", NP)
-	fmt.Printf("[N]    : %d \n", N)
-	fmt.Printf("[VP]   : %d \n", VP)
-
-	Setup()
-	w := watch.StopWatch{}
-
-	// Calculation
-	// ---- ---- ---- ---- ----
-	w.Reset()
-	for d := 0; d < VP; d++ { //sub-diagonal of j=i+d
-		for i := 0; i+d < VP; i++ {
-			go Chunk(i, i+d)
-		}
-	}
-	<-finish
-
-	dur := w.Reset()
-	// ---- ---- ---- ---- ----
-
-	milisec := dur.Nanoseconds() / 1000000 // ms conversion
-	fmt.Printf("[Time] : \t%d ms \n", milisec)
 }
 
-// Initialize variables
-func Setup() {
-	// ---- ---- ---- ---- ----
-	var total float64
-	for i := 0; i < N; i++ {
-		var value float64 = rand.Float64()
-		total += value
-		prob[i] = value
+// Setup ...
+// 		Initialize global variables
+//  	Receiver
+//  		_env : Environment
+func (_env *Environment) Setup(n, np, vp int) {
+	// Copy Constants
+	_env.N, _env.NP, _env.VP = n, np, vp
+
+	// Allocate Horizontal/Vertical channels
+	_env.h = make([][]chan int, _env.VP)
+	_env.v = make([][]chan int, _env.VP)
+
+	for i := range _env.h {
+		// Bounded
+		_env.h[i] = make([]chan int, 1)
+		_env.v[i] = make([]chan int, 1)
 	}
 
-	for i := 0; i < N; i++ {
-		prob[i] = prob[i] / total
-	}
-	// ---- ---- ---- ---- ----
-
-	for i := 0; i < VP; i++ {
-		for j := i; j < VP; j++ {
-			if i < VP-1 {
-				h[i][j] = make(chan int, 1)
-			}
-			if i > 0 {
-				v[i][j] = make(chan int, 1)
-			}
-		}
-	}
-
-	finish = make(chan int, 1)
+	// Finish notifier channel
+	_env.finish = make(chan int, 1)
 }
 
-func Chunk(i, j int) {
+// Display ...
+//
+func (_env *Environment) Display(writer io.Writer) {
+	fmt.Fprintf(writer, "[Proc] : %5d \n", _env.NP)
+	fmt.Fprintf(writer, "[N]    : %5d \n", _env.N)
+	fmt.Fprintf(writer, "[VP]   : %5d \n", _env.VP)
+}
+
+// ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
+
+// ChunkData ...
+//  	Data set for chunk calculation & synchronization
+type ChunkData struct {
+	PreSet  [2]chan int
+	PostSet [2]chan int
+}
+
+// Wait ...
+//  	Receiver
+//  		ch
+func (ch *ChunkData) Wait() {
+	if ch.PreSet[0] != nil {
+		<-ch.PreSet[0]
+	}
+	if ch.PreSet[1] != nil {
+		<-ch.PreSet[1]
+	}
+	return
+}
+
+// Notify ...
+// 		Receiver
+//			ch
+func (ch *ChunkData) Notify() {
+	if ch.PostSet[0] != nil {
+		ch.PostSet[0] <- 1
+	}
+	if ch.PostSet[1] != nil {
+		ch.PostSet[1] <- 1
+	}
+	return
+}
+
+// CalculateChunk ...
+//		Params
+//  		_tree
+//  		i
+//  		j
+//  		vp
+//  	Returns
+//  		Side Effect
+/*
+func CalculateChunk(_tree *obst.Tree, i int, j int, vp int) {
 	var bb int
-
-	il := (i * (N + 1)) / VP //block-low for i
-	jl := (j * (N + 1)) / VP //block-low for j
-
-	ih := ((i+1)*(N+1))/VP - 1 //block-high for i
-	jh := ((j+1)*(N+1))/VP - 1 //block-high for j
-
+	il := (i * (N + 1)) / vp //block-low for i
+	jl := (j * (N + 1)) / vp //block-low for j
+	ih := ((i+1)*(N+1))/vp - 1 //block-high for i
+	jh := ((j+1)*(N+1))/vp - 1 //block-high for j
 	if i < j { // not a tile on the diagonal
 		<-h[i][j-1] // receive from the left
 		<-v[i+1][j] // receive from below
 	}
-
 	for ii := ih; ii >= il; ii-- {
 		if i == j {
 			bb = ii
@@ -106,10 +116,13 @@ func Chunk(i, j int) {
 			bb = jl
 		}
 		for jj := bb; jj <= jh; jj++ {
-			root[ii][jj], cost[ii][jj] = Tree(ii, jj)
+			// Calculate ...
+			root, cost := _tree.Calculate(ii, jj)
+			// Assignment
+			_tree.root[ii][jj] = root
+			_tree.cost[ii][jj] = cost
 		}
 	}
-
 	if j < VP-1 { // not a tile on the right border
 		h[i][j] <- 1
 	}
@@ -120,36 +133,61 @@ func Chunk(i, j int) {
 		finish <- 1
 	}
 }
+*/
 
-func Tree(row, col int) (rt int, cst float64) {
-	var bestCost float64 = math.MaxFloat64
-	var bestRoot int = -1
+// ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 
-	switch {
-	case row >= col: // Unused range
-		rt, cst = -1, 0.0
+const (
+	// MaxN ...
+	//  	Problem size
+	// 		Maximum N is (1 << 13)
+	MaxN = 1 << 11
 
-	case row+1 == col: // Main diagonal
-		rt, cst = row+1, prob[row]
+	// MaxVP ...
+	//  	Chunk's size
+	MaxVP = 1 << 11
+)
 
-	case row+1 < col: // Tree estimation...
+var (
+	// Global environment
+	env Environment
+	sw  watch.StopWatch
+)
 
-		sum := 0.0 // basic cost
-		for k := row; k < col; k++ {
-			sum += prob[k]
+func init() {
+	// Explicit Setting for Number of Physical Processer
+	MaxNP := runtime.NumCPU()
+	runtime.GOMAXPROCS(MaxNP)
+
+	// Maximize
+	env.Setup(MaxN, MaxNP, MaxVP)
+	env.Display(os.Stdout)
+
+}
+
+func main() {
+	// OBST to calculate
+	tree := obst.NewTree(MaxN)
+	tree.Setup()
+
+	sw.Reset() // Start the timer
+
+	Evaluate(&env, tree) // Process the problem
+
+	dur := sw.Pick() // Timer result
+	milisec := dur.Nanoseconds() / 1000000
+	fmt.Fprintf(os.Stdout, "[Time] : \t%d ms \n", milisec)
+}
+
+// Evaluate ...
+//  	Parallel Chunk processing
+func Evaluate(env *Environment, tree *obst.Tree) {
+	env.finish <- 1
+	for d := 0; d < env.VP; d++ { //sub-diagonal of j=i+d
+		for i := 0; i+d < env.VP; i++ {
+			// go Chunk(i, i+d)
 		}
-
-		// find optimized case
-		for i := row; i < col; i++ {
-			rCost := cost[row][i] + cost[i+1][col]
-			if rCost < bestCost {
-				bestCost = rCost
-				bestRoot = i + 1
-			}
-		}
-
-		rt, cst = bestRoot, bestCost+sum
-	} //switch
-
+	}
+	<-env.finish
 	return
 }
