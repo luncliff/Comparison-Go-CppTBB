@@ -7,25 +7,28 @@
 #include <vector>
 #include "./Matrix.h"
 
+using i64 = std::int64_t;
+using f64 = std::double_t;
+
 // OBST
 struct Tree
 {
     template <typename T>
     using Vector = std::vector<T>;
 
-    Vector<double>  prob;
-    Matrix<double>  cost{ prob.size() + 1, prob.size() + 1 };
-    Matrix<int>     root{ prob.size() + 1, prob.size() + 1 };
+    Vector<f64>  prob;
+    Matrix<f64>  cost{ prob.size() + 1, prob.size() + 1 };
+    Matrix<i64>  root{ prob.size() + 1, prob.size() + 1 };
 
     explicit Tree(size_t _size) :
         prob(_size)
     {}
 
     static 
-    auto Calculate(Tree& _tree, int _row, int _col) -> std::tuple<int, double>
+    auto Calculate(Tree& _tree, u32 _row, u32 _col) -> std::tuple<i64, f64>
     {
-        int     root{},   best_root = -1;
-        double  weight{}, best_weight = LDBL_MAX;
+        i64  root{},   best_root = -1;
+        f64  weight{}, best_weight = LDBL_MAX;
 
         // Unused range
         if (_row >= _col) {
@@ -39,15 +42,16 @@ struct Tree
         // Tree estimation
         else {
 
-            double sum = 0; // basic weight
-            for (auto k = _row; k < _col; ++k) {
+            // basic weight
+            f64 sum = 0; 
+            for (u32 k = _row; k < _col; ++k) {
                 sum += _tree.prob[k];
             }
 
-            for (auto i = _row; i < _col; ++i) 
+            for (u32 i = _row; i < _col; ++i)
             {
-                auto temp_weight = _tree.cost[_row][i] 
-                                    + _tree.cost[i + 1][_col];
+                f64 temp_weight = _tree.cost[_row][i]
+                                  + _tree.cost[i + 1][_col];
 
                 if (temp_weight < best_weight) {
                     best_weight = temp_weight;
@@ -62,6 +66,10 @@ struct Tree
         return std::make_tuple(root, weight);
     }
 
+    size_t size() const noexcept
+    {
+        return prob.size();
+    }
 };
 
 #endif

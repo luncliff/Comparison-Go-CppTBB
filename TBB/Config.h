@@ -1,11 +1,16 @@
 #pragma once
+#include <cstdint>
+
+using u32 = std::uint32_t;
+using i32 = std::int32_t;
+using u64 = std::uint64_t;
 
 struct Config
 {
-    int N, NP, VP;
+    u32 N, NP, VP;
 
     Config() = default;
-    Config(int n, int np, int vp) :
+    Config(u32 n, u32 np, u32 vp) :
         N{ n }, NP{ np }, VP{ vp }
     {}
 };

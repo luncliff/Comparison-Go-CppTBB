@@ -33,6 +33,11 @@ public:
         return p + (_row * col);
     }
     
+    const T* operator[](int _row) const 
+    {
+        return p + (_row * col);
+    }
+
     std::size_t size() const noexcept
     {
         return row * col;

@@ -2,6 +2,8 @@
 #define _CHUNK_TASK_HPP_
 
 #include <tbb/task.h>
+#include <tbb/task_scheduler_init.h>
+
 #include "Tree.h"
 
 
@@ -9,8 +11,8 @@ class ChunkTask : public tbb::task
 {
 private:
     Tree&   tree;
-    int     i, j;   // top-left index of chunk
-    int     vp;     // chunk width
+    i32     i, j;   // top-left index of chunk
+    u32     width;     // chunk width
 
 public:
     // Chained task
@@ -21,9 +23,9 @@ public:
 public:
     // ctor
 	ChunkTask(Tree& _tree, 
-              int _i, int _j, int _vp) :
+              i32 _i, i32 _j, u32 _width) :
         tree{ _tree },
-        i {_i}, j{ _j },   vp{ _vp }
+        i {_i}, j{ _j }, width{ _width }
 	{}
 
     // Wait for pre-set
@@ -35,19 +37,20 @@ public:
     //      If possible, enqueue them into scheduler
     void notify()
     {
-        if (post_set[0] != nullptr) {
-            // if ready, count will be 0
-            if (post_set[0]->decrement_ref_count() == 0) {
-                // spawn : enqueue to scheduler
-                spawn(*post_set[0]);
-            }
+        // if ready, ref count will become 0
+        if (post_set[0] != nullptr 
+            && post_set[0]->decrement_ref_count() == 0) 
+        {
+            // spawn : enqueue to scheduler
+            spawn(*post_set[0]);
         }
-        if (post_set[1] != nullptr) {
-            // if ready, count will be 0
-            if (post_set[1]->decrement_ref_count() == 0) {
-                // spawn : enqueue to scheduler
-                spawn(*post_set[1]);
-            }
+
+        // if ready, ref count will become 0
+        if (post_set[1] != nullptr 
+            && post_set[1]->decrement_ref_count() == 0) 
+        {
+            // spawn : enqueue to scheduler
+            spawn(*post_set[1]);
         }
     }
 
@@ -59,11 +62,10 @@ public:
         // if there is chained task, spawn it immediately
         if (chain != nullptr) { spawn(*chain); }
 
-
         // ---- ---- Processing ---- ----
         // loop: bottom-left >>> top-right
-        for (auto row = vp - 1; row >= 0; --row) {
-            for (auto col = 0; col < vp - 1; ++col) 
+        for (i32 row = i-1 + width; row >= i; --row) {
+            for (i32 col = j; col < j + width; ++col)
             {
                 // Calculate without side-effect
                 auto root_cost = Tree::Calculate(tree, row, col);
