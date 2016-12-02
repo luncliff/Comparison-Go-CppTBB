@@ -1,14 +1,14 @@
 #ifndef _RESEARCH_OBST_H_
 #define _RESEARCH_OBST_H_
 
-#include <cstdint>
 #include <tuple>
-#include <tbb/task.h>
 #include <vector>
+
+#include <tbb/task.h>
+
+#include "./Alias.h"
 #include "./Matrix.h"
 
-using i64 = std::int64_t;
-using f64 = std::double_t;
 
 // OBST
 struct Tree
@@ -25,7 +25,7 @@ struct Tree
     {}
 
     static 
-    auto Calculate(Tree& _tree, u32 _row, u32 _col) -> std::tuple<i64, f64>
+    auto Calculate(Tree& _tree, i32 _row, i32 _col) -> std::tuple<i64, f64>
     {
         i64  root{},   best_root = -1;
         f64  weight{}, best_weight = LDBL_MAX;
@@ -41,15 +41,15 @@ struct Tree
         }
         // Tree estimation
         else {
-
             // basic weight
             f64 sum = 0; 
-            for (u32 k = _row; k < _col; ++k) {
-                sum += _tree.prob[k];
-            }
 
-            for (u32 i = _row; i < _col; ++i)
+            for (i32 i = _row; i < _col; ++i)
             {
+                // Accumulate
+                sum += _tree.prob[i];
+
+                // Find best weight
                 f64 temp_weight = _tree.cost[_row][i]
                                   + _tree.cost[i + 1][_col];
 

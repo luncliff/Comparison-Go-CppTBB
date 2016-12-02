@@ -1,6 +1,18 @@
-#pragma once
-#include "./Config.h"
+#ifndef _RESEARCH_EVALUATE_HPP_
+#define _RESEARCH_EVALUATE_HPP_
+
+#include "./Alias.h"
 #include "./ChunkTask.hpp"
+
+struct Config
+{
+    i32 N, NP, VP;
+
+    Config() = default;
+    Config(i32 n, i32 np, i32 vp) :
+        N{ n }, NP{ np }, VP{ vp }
+    {}
+}; 
 
 static void EvaliateSeq(const Config& cfg, Tree& _tree) noexcept;
 static void EvaluatePar(const Config& cfg, Tree& _tree) noexcept;
@@ -9,7 +21,7 @@ static void EvaluatePar(const Config& cfg, Tree& _tree) noexcept;
 // Sequential Evaluation
 static void EvaliateSeq(const Config& cfg, Tree& _tree) noexcept
 {
-    const u32 N = cfg.N;
+    const i32 N = cfg.N;
 
     // loop : bottom-left >>> top-right
     //      [ + + + + ]
@@ -37,14 +49,13 @@ static void EvaliateSeq(const Config& cfg, Tree& _tree) noexcept
 //      Chained spawning, Explicit task destroy
 static void EvaluatePar(const Config& cfg, Tree& _tree) noexcept
 {
-    
 
-    const u32  VP = cfg.VP;
-    const u32  N  = cfg.N;
+    const i32  VP = cfg.VP;
+    const i32  N  = cfg.N;
 
     // Matrix of ChunkTask.
     //  == Task[vp][vp]
-    Matrix<ChunkTask*> task{ VP, VP };
+    Matrix<ChunkTask*> task{ static_cast<u32>(VP) };
 
     // ---- ---- Construction ---- ---- ----
 
@@ -108,4 +119,4 @@ static void EvaluatePar(const Config& cfg, Tree& _tree) noexcept
 
     return;
 }
-
+#endif

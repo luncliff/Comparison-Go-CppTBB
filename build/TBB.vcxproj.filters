@@ -138,7 +138,10 @@
     <ClInclude Include="..\TBB\Evaluate.hpp">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\TBB\Config.h">
+    <ClInclude Include="..\TBB\Alias.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TBB\Watch.hpp">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

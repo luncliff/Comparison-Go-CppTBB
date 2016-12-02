@@ -1,56 +1,97 @@
+
 #include <iostream>
 #include <iomanip>
-#include <tbb/task_scheduler_init.h>
-// #include watch
-#include "Evaluate.hpp"
+#include <random>
 
-using namespace std;
-using namespace tbb;
+#include "./Watch.hpp"
+#include "./Evaluate.hpp"
 
-std::ostream& operator << (std::ostream& _out, const Tree& _tree);
+using StopWatch = magic::stop_watch<std::chrono::high_resolution_clock>;
 
-void init(const Config& _cfg) 
+static void Display(const Config& _cfg);
+static void Display(const Tree& _tree);
+
+static void Setup(const Config& _cfg) 
 {
-    //tbb::task_scheduler_init sched_init{};
-    //sched_init.initialize(_cfg.NP);
-
+    tbb::task_scheduler_init sched_init(_cfg.NP);
 }
+
+static void Init(Tree& _tree);
 
 int main(void)
 {
-    Config  cfg{};
-    cfg.N  = 1 << 2;
-    cfg.NP = 1 << 0;
-    cfg.VP = 1 << 1;
+    using namespace std;
+    using namespace std::chrono;
 
-    init(cfg);
+    Config  config{};
+    config.N  = 1 << 11;
+    config.NP = 1 << 3;
+    config.VP = 1 << 3;
 
-    auto tree = std::make_unique<Tree>(cfg.N);
+    Setup(config);
+    Display(config);
+
+    // ---- Construct / Initialize ----
+    auto tree = std::make_unique<Tree>(config.N);
+    Init(*tree);
+
+    cout << "Initialization done." << endl;
+    // ---- ---- Evaluation  ---- ----
+    StopWatch watch{};
+
+    EvaluatePar(config, *tree);
+
+    auto dur = watch.reset<milliseconds>();
+    // ---- ---- ---- ---- ---- ----
     
-    tree->prob[0] = 0.1*1;
-    tree->prob[1] = 0.1*2;
-    tree->prob[2] = 0.1*3;
-    tree->prob[3] = 0.1*4;
-
-    EvaluatePar(cfg, *tree);
-
-    std::cout << *tree << std::endl;
+    //Display(*tree);
+    cout << dur.count() << " ms" << endl;
 
     return std::system("pause");
 }
 
 
-std::ostream& operator << (std::ostream& _out, const Tree& _tree)
+
+static void Init(Tree& _tree)
+{
+    using namespace std;
+    using namespace std::chrono;
+
+    auto duration = system_clock::now().time_since_epoch();
+    auto seed = static_cast<u32>(duration.count());
+    mt19937 rnd{ seed };
+
+    f64     sum{};
+    for (i32 i = 0; i < _tree.prob.size(); ++i) {
+        sum += _tree.prob[i] = rnd() % (1 << 20);
+    }
+    for (i32 i = 0; i < _tree.prob.size(); ++i) {
+        _tree.prob[i] /= sum;
+    }
+}
+
+
+
+static void Display(const Config& _cfg)
 {
     using namespace std;
 
-    const i32 N = _tree.size();
+    printf_s(" [ Proc ] : %5d\n", _cfg.NP);
+    printf_s(" [ N    ] : %5d\n", _cfg.N);
+    printf_s(" [ VP   ] : %5d\n", _cfg.VP);
+}
+
+static void Display(const Tree& _tree)
+{
+    using namespace std;
+
+    const i32 N = static_cast<i32>(_tree.size());
 
     puts("--- Prob ---");
     for (i32 i = 0; i < N; ++i) {
-        _out << _tree.prob[i] << ", ";
+        printf_s(" %4.4lf, ", _tree.prob[i]);
     }
-    _out << '\n';
+    putchar('\n');
 
     puts("--- Root/Cost ---");
     for (i32 i = 0; i < N + 1; ++i) {
@@ -58,9 +99,8 @@ std::ostream& operator << (std::ostream& _out, const Tree& _tree)
         {
             auto root = _tree.root[i][j];
             auto cost = _tree.cost[i][j];
-            printf(" [%2d,%2.2lf] ", root, cost);
+            printf_s(" [%2d,%2.2lf] ", root, cost);
         }
-        _out << "\n";
+        putchar('\n');
     }
-    return _out;
 }

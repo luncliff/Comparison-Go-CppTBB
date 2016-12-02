@@ -1,18 +1,17 @@
-#ifndef _CHUNK_TASK_HPP_
-#define _CHUNK_TASK_HPP_
+#ifndef _RESEARCH_CHUNK_TASK_HPP_
+#define _RESEARCH_CHUNK_TASK_HPP_
 
 #include <tbb/task.h>
 #include <tbb/task_scheduler_init.h>
 
-#include "Tree.h"
-
+#include "./Tree.h"
 
 class ChunkTask : public tbb::task
 {
 private:
     Tree&   tree;
     i32     i, j;   // top-left index of chunk
-    u32     width;     // chunk width
+    i32     width;     // chunk width
 
 public:
     // Chained task
@@ -23,7 +22,7 @@ public:
 public:
     // ctor
 	ChunkTask(Tree& _tree, 
-              i32 _i, i32 _j, u32 _width) :
+              i32 _i, i32 _j, i32 _width) :
         tree{ _tree },
         i {_i}, j{ _j }, width{ _width }
 	{}
