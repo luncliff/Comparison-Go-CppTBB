@@ -148,7 +148,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\TBB\main.cpp" />
-    <ClCompile Include="..\TBB\sample.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\lib\tbb2017\lib\intel64\vc14\tbb.lib" />
@@ -163,9 +162,11 @@
     <Library Include="..\lib\tbb2017\lib\intel64\vc14\tbb_preview_debug.lib" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\TBB\DagTask.hpp" />
+    <ClInclude Include="..\TBB\Config.h" />
+    <ClInclude Include="..\TBB\Evaluate.hpp" />
+    <ClInclude Include="..\TBB\Tree.h" />
     <ClInclude Include="..\TBB\ChunkTask.hpp" />
-    <ClInclude Include="..\TBB\Utils.h" />
+    <ClInclude Include="..\TBB\Matrix.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

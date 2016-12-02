@@ -92,9 +92,6 @@
     <ClCompile Include="..\TBB\main.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\TBB\sample.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\lib\tbb2017\lib\intel64\vc14\tbb.lib">
@@ -129,13 +126,19 @@
     </Library>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\TBB\DagTask.hpp">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\TBB\Utils.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\TBB\ChunkTask.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TBB\Matrix.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TBB\Tree.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TBB\Evaluate.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TBB\Config.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
