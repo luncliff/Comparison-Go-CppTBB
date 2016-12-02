@@ -148,6 +148,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\TBB\main.cpp" />
+    <ClCompile Include="..\TBB\sample.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\lib\tbb2017\lib\intel64\vc14\tbb.lib" />
@@ -163,6 +164,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\TBB\DagTask.hpp" />
+    <ClInclude Include="..\TBB\ChunkTask.hpp" />
+    <ClInclude Include="..\TBB\Utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

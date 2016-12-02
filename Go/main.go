@@ -11,14 +11,36 @@ import (
 
 // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 
-// Environment ...
+// Config ...
 //  	Test data
-type Environment struct {
+type Config struct {
 	// N  : Problem's size
 	// NP : Number of processors
 	// VP : Chunk size
 	N, NP, VP int
+}
 
+// Setup ...
+// 		Initialize global variables
+//  	Receiver
+//  		_cfg : Config
+func (_cfg *Config) Setup(n, np, vp int) {
+	// Copy Constants
+	_cfg.N, _cfg.NP, _cfg.VP = n, np, vp
+
+}
+
+// Display ...
+//
+func (_cfg *Config) Display(writer io.Writer) {
+	fmt.Fprintf(writer, "[Proc] : %5d \n", _cfg.NP)
+	fmt.Fprintf(writer, "[N]    : %5d \n", _cfg.N)
+	fmt.Fprintf(writer, "[VP]   : %5d \n", _cfg.VP)
+}
+
+// Shared ...
+//  	Shared data for synchronization
+type Shared struct {
 	// Channel matrix for sychronizatin
 	h, v [][]chan int
 	// Channel to notify finish
@@ -26,33 +48,20 @@ type Environment struct {
 }
 
 // Setup ...
-// 		Initialize global variables
-//  	Receiver
-//  		_env : Environment
-func (_env *Environment) Setup(n, np, vp int) {
-	// Copy Constants
-	_env.N, _env.NP, _env.VP = n, np, vp
-
+//		Initialize set of shared data
+func (_shd *Shared) Setup(n, np, vp int) {
 	// Allocate Horizontal/Vertical channels
-	_env.h = make([][]chan int, _env.VP)
-	_env.v = make([][]chan int, _env.VP)
+	_shd.h = make([][]chan int, vp)
+	_shd.v = make([][]chan int, vp)
 
-	for i := range _env.h {
+	for i := range _shd.h {
 		// Bounded
-		_env.h[i] = make([]chan int, 1)
-		_env.v[i] = make([]chan int, 1)
+		_shd.h[i] = make([]chan int, 1)
+		_shd.v[i] = make([]chan int, 1)
 	}
 
 	// Finish notifier channel
-	_env.finish = make(chan int, 1)
-}
-
-// Display ...
-//
-func (_env *Environment) Display(writer io.Writer) {
-	fmt.Fprintf(writer, "[Proc] : %5d \n", _env.NP)
-	fmt.Fprintf(writer, "[N]    : %5d \n", _env.N)
-	fmt.Fprintf(writer, "[VP]   : %5d \n", _env.VP)
+	_shd.finish = make(chan int, 1)
 }
 
 // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
@@ -149,9 +158,9 @@ const (
 )
 
 var (
-	// Global environment
-	env Environment
-	sw  watch.StopWatch
+	cfg Config          // Global Config
+	shd Shared          // Sync data
+	sw  watch.StopWatch // Stop watch
 )
 
 func init() {
@@ -160,8 +169,10 @@ func init() {
 	runtime.GOMAXPROCS(MaxNP)
 
 	// Maximize
-	env.Setup(MaxN, MaxNP, MaxVP)
-	env.Display(os.Stdout)
+	cfg.Setup(MaxN, MaxNP, MaxVP)
+	cfg.Display(os.Stdout)
+
+	shd.Setup(MaxN, MaxNP, MaxVP)
 
 }
 
@@ -172,7 +183,7 @@ func main() {
 
 	sw.Reset() // Start the timer
 
-	Evaluate(&env, tree) // Process the problem
+	Evaluate(&cfg, &shd, tree) // Process the problem
 
 	dur := sw.Pick() // Timer result
 	milisec := dur.Nanoseconds() / 1000000
@@ -181,13 +192,13 @@ func main() {
 
 // Evaluate ...
 //  	Parallel Chunk processing
-func Evaluate(env *Environment, tree *obst.Tree) {
-	env.finish <- 1
-	for d := 0; d < env.VP; d++ { //sub-diagonal of j=i+d
-		for i := 0; i+d < env.VP; i++ {
+func Evaluate(cfg *Config, shd *Shared, tree *obst.Tree) {
+	shd.finish <- 1
+	for d := 0; d < cfg.VP; d++ { //sub-diagonal of j=i+d
+		for i := 0; i+d < cfg.VP; i++ {
 			// go Chunk(i, i+d)
 		}
 	}
-	<-env.finish
+	<-shd.finish
 	return
 }
