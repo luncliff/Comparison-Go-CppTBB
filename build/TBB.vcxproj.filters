@@ -22,6 +22,9 @@
     <Filter Include="lib\tbb2017\bin\vc14">
       <UniqueIdentifier>{7cedaaa2-f335-4a97-872c-1b15adf21647}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\utils">
+      <UniqueIdentifier>{0a6a5de4-faa5-4cff-b05e-55be2d053b69}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\lib\tbb2017\README">
@@ -129,9 +132,6 @@
     <ClInclude Include="..\TBB\ChunkTask.hpp">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\TBB\Matrix.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\TBB\Tree.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -141,8 +141,11 @@
     <ClInclude Include="..\TBB\Alias.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\TBB\Watch.hpp">
-      <Filter>src</Filter>
+    <ClInclude Include="..\TBB\utils\Matrix.h">
+      <Filter>src\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\TBB\utils\Watch.hpp">
+      <Filter>src\utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

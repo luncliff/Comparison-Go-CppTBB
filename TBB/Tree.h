@@ -7,7 +7,7 @@
 #include <tbb/task.h>
 
 #include "./Alias.h"
-#include "./Matrix.h"
+#include "./utils/Matrix.h"
 
 
 // OBST

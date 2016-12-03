@@ -166,8 +166,8 @@
     <ClInclude Include="..\TBB\Evaluate.hpp" />
     <ClInclude Include="..\TBB\Tree.h" />
     <ClInclude Include="..\TBB\ChunkTask.hpp" />
-    <ClInclude Include="..\TBB\Matrix.h" />
-    <ClInclude Include="..\TBB\Watch.hpp" />
+    <ClInclude Include="..\TBB\utils\Matrix.h" />
+    <ClInclude Include="..\TBB\utils\Watch.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

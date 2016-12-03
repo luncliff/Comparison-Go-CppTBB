@@ -3,7 +3,7 @@
 #include <iomanip>
 #include <random>
 
-#include "./Watch.hpp"
+#include "./utils/Watch.hpp"
 #include "./Evaluate.hpp"
 
 using StopWatch = magic::stop_watch<std::chrono::high_resolution_clock>;

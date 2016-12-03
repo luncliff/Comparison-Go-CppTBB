@@ -3,6 +3,7 @@ package obst
 import (
 	"math"
 	"math/rand"
+	"matrix"
 )
 
 // Tree ...
@@ -19,92 +20,82 @@ type Tree struct {
 // NewTree ...
 //		Allocate memory resoureces for Optimal Binary Search Tree
 //  	See also : type `Tree`
-func NewTree(_size int) *Tree {
-	res := new(Tree)
-	res.prob = make([]float64, _size)
+func NewTree(n uint) *Tree {
+	res := new(Tree) // allocate
+	res.prob = make([]float64, n)
 
-	// 2-Dimensional Slice instead of Matrix
-	// Construct `[size][size]int`
-	// Check for later optimization
-	res.root = make([][]int, _size)
-	for i := range res.root {
-		res.root[i] = make([]int, _size)
-	}
-
-	// 2-Dimensional Slice instead of Matrix
-	// Construct `[size][size]float64`
-	// Check for later optimization
-	res.cost = make([][]float64, _size)
-	for i := range res.cost {
-		res.cost[i] = make([]float64, _size)
-	}
+	res.root = matrix.Int2D(n+1, n+1)     // `[N+1][N+1]int`
+	res.cost = matrix.Float642D(n+1, n+1) // `[N+1][N+1]float64`
 
 	return res
 }
 
-// Setup ...
+// Init ...
 //  	Setup probabilities of the tree's vertices
 //  	Receiver
 //  		_tree
-func (_tree *Tree) Setup() {
+func (tree *Tree) Init() {
 	var total float64
-	// Set random values
-	for i := range _tree.prob {
-		rndVal := rand.Float64()
-		total += rndVal
-		_tree.prob[i] = rndVal
+	// Distribute random values
+	for i := range tree.prob {
+		R := rand.Float64()
+		total += R
+		tree.prob[i] = R
 	}
-
 	// Normalize with total value
-	for i := range _tree.prob {
-		_tree.prob[i] = _tree.prob[i] / total
+	for i := range tree.prob {
+		tree.prob[i] = tree.prob[i] / total
 	}
 }
 
+// Size ...
+//  	The number of vertices in tree
+func (tree *Tree) Size() uint {
+	return len(tree.prob)
+}
+
 // Calculate ...
-//  	To prevent side effect, explicit assignment after calculation is required
-//  	Receiver
-//  		_tree
-//  	Params
-//  		_row
-//  		_col
-// 		Returns
-//  		- root_
-//  		- cost_
-func (_tree *Tree) Calculate(_row int, _col int) (root int, cost float64) {
-	// Optimal Cost
-	var opCost float64 = math.MaxFloat64
-	// Optimal Root
-	var opRoot int = -1
+//  	To prevent side effect, explicit assignment is required
+//  	after calculation. Tree won't be modified in the function
+//  	- Receiver
+//  		tree
+//  	- Params
+//  		row
+//  		col
+// 		- Returns
+//  		root
+//  		weight
+func (tree *Tree) Calculate(row int, col int) (root int, weight float64) {
+
+	var bestWeight float64 = math.MaxFloat64 // Optimal Cost
+	var bestRoot int = -1                    // Optimal Root
 
 	switch {
 	// Unused range
-	case _row >= _col:
-		root, cost = -1, 0.0
+	case row >= col:
+		root, weight = -1, 0.0
 
 	// Main diagonal
-	case _row+1 == _col:
-		root, cost = _row+1, _tree.prob[_row]
+	case row+1 == col:
+		root, weight = row+1, tree.prob[row]
 
 	// Estimation : (Data Dependency Exists)
-	case _row+1 < _col:
-		sumCost := 0.0 // basic cost
-		for k := _row; k < _col; k++ {
-			sumCost += _tree.prob[k]
-		}
+	case row+1 < col:
+		sum := 0.0 // basic weight of tree
 
-		// Find optimized case
-		for i := _row; i < _col; i++ {
-			rCost := _tree.cost[_row][i] + _tree.cost[i+1][_col]
-			if rCost < opCost {
-				opCost = rCost
-				opRoot = i + 1
+		for i := row; i < col; i++ {
+			sum += tree.prob[i] // Accumulate
+
+			// Find optimized case
+			tempWeight := tree.cost[row][i] + tree.cost[i+1][col]
+			if tempWeight < bestWeight {
+				bestWeight = tempWeight
+				bestRoot = i + 1 // 1-based indexing
 			}
 		}
-
-		// Root : Optimal Root
-		// Cost : Sum of all cost + Optimal Additinal Cost
-		root, cost = opRoot, opCost+sumCost
+		// Root : Optimal root index
+		// Cost : Sum of all cost + Additinal weight
+		root, weight = bestRoot, bestWeight+sum
 	} //switch
 	return
 }
