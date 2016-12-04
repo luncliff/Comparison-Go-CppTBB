@@ -32,7 +32,7 @@ namespace magic
 
     public:
         template <typename UnitType = std::chrono::milliseconds>
-        duration pick() const noexcept
+        decltype(auto) pick() const noexcept
         {
             duration span = clock_type::now() - start;
             return std::chrono::duration_cast<UnitType>(span);
@@ -46,7 +46,7 @@ namespace magic
             // reset start time point
             start = clock_type::now();
 
-            return span;
+            return std::chrono::duration_cast<UnitType>(span);
         }
 
     };

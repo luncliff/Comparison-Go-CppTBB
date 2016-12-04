@@ -72,4 +72,49 @@ struct Tree
     }
 };
 
+
+static void Init(Tree& _tree)
+{
+    using namespace std;
+    using namespace std::chrono;
+
+    auto duration = system_clock::now().time_since_epoch();
+    auto seed = static_cast<u32>(duration.count());
+    mt19937 rnd{ seed };
+
+    f64     sum{};
+    for (i32 i = 0; i < _tree.prob.size(); ++i) {
+        sum += _tree.prob[i] = rnd() % (1 << 20);
+    }
+    for (i32 i = 0; i < _tree.prob.size(); ++i) {
+        _tree.prob[i] /= sum;
+    }
+}
+
+
+static void Display(const Tree& _tree)
+{
+    using namespace std;
+
+    const i32 N = static_cast<i32>(_tree.size());
+
+    puts("--- Prob ---");
+    for (i32 i = 0; i < N; ++i) {
+        printf_s(" %4.4lf, ", _tree.prob[i]);
+    }
+    putchar('\n');
+
+    puts("--- Root/Cost ---");
+    for (i32 i = 0; i < N + 1; ++i) {
+        for (i32 j = 0; j < N + 1; ++j)
+        {
+            auto root = _tree.root[i][j];
+            auto cost = _tree.cost[i][j];
+            printf_s(" [%2d,%2.2lf] ", root, cost);
+        }
+        putchar('\n');
+    }
+}
+
+
 #endif
