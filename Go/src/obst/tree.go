@@ -12,20 +12,20 @@ import (
 // 		- `root` : [][]int
 //		- `cost` : [][]float64
 type Tree struct {
-	cost [][]float64
-	root [][]int
-	prob []float64
+	Cost [][]float64
+	Root [][]int
+	Prob []float64
 }
 
 // NewTree ...
 //		Allocate memory resoureces for Optimal Binary Search Tree
 //  	See also : type `Tree`
-func NewTree(n uint) *Tree {
+func NewTree(n int) *Tree {
 	res := new(Tree) // allocate
-	res.prob = make([]float64, n)
+	res.Prob = make([]float64, n)
 
-	res.root = matrix.Int2D(n+1, n+1)     // `[N+1][N+1]int`
-	res.cost = matrix.Float642D(n+1, n+1) // `[N+1][N+1]float64`
+	res.Root = matrix.Int2D(n+1, n+1)     // `[N+1][N+1]int`
+	res.Cost = matrix.Float642D(n+1, n+1) // `[N+1][N+1]float64`
 
 	return res
 }
@@ -37,21 +37,21 @@ func NewTree(n uint) *Tree {
 func (tree *Tree) Init() {
 	var total float64
 	// Distribute random values
-	for i := range tree.prob {
+	for i := range tree.Prob {
 		R := rand.Float64()
 		total += R
-		tree.prob[i] = R
+		tree.Prob[i] = R
 	}
 	// Normalize with total value
-	for i := range tree.prob {
-		tree.prob[i] = tree.prob[i] / total
+	for i := range tree.Prob {
+		tree.Prob[i] = tree.Prob[i] / total
 	}
 }
 
 // Size ...
 //  	The number of vertices in tree
-func (tree *Tree) Size() uint {
-	return len(tree.prob)
+func (tree *Tree) Size() int {
+	return len(tree.Prob)
 }
 
 // Calculate ...
@@ -77,17 +77,17 @@ func (tree *Tree) Calculate(row int, col int) (root int, weight float64) {
 
 	// Main diagonal
 	case row+1 == col:
-		root, weight = row+1, tree.prob[row]
+		root, weight = row+1, tree.Prob[row]
 
 	// Estimation : (Data Dependency Exists)
 	case row+1 < col:
 		sum := 0.0 // basic weight of tree
 
 		for i := row; i < col; i++ {
-			sum += tree.prob[i] // Accumulate
+			sum += tree.Prob[i] // Accumulate
 
 			// Find optimized case
-			tempWeight := tree.cost[row][i] + tree.cost[i+1][col]
+			tempWeight := tree.Cost[row][i] + tree.Cost[i+1][col]
 			if tempWeight < bestWeight {
 				bestWeight = tempWeight
 				bestRoot = i + 1 // 1-based indexing

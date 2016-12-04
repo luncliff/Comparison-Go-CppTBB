@@ -3,6 +3,7 @@
 import (
 	"fmt"
 	"io"
+	"matrix"
 )
 
 // Config ...
@@ -32,28 +33,29 @@ func (cfg *Config) Display(writer io.Writer) {
 	fmt.Fprintf(writer, "[ VP   ] : %5d \n", cfg.VP)
 }
 
-// Shared ...
-//  	Shared data for synchronization
-type Shared struct {
-	// Channel matrix for sychronizatin
-	h, v [][]chan int
-	// Channel to notify finish
-	finish chan int
+// Channels ...
+//  	Shared channels for synchronization
+type Channels struct {
+	H, V   [][]chan int // Matrix for sync
+	Finish chan int     // Notify finish
 }
 
 // Init ...
 //		Initialize set of shared data
-func (shd *Shared) Init(n uint) {
+func (shd *Channels) Init(width int) {
 	// Allocate Horizontal/Vertical channels
-	shd.h = make([][]chan int, n)
-	shd.v = make([][]chan int, n)
+	// Square matrix
+	shd.H = matrix.ChanInt2D(width, width)
+	shd.V = matrix.ChanInt2D(width, width)
 
-	for i := range shd.h {
-		// Bounded
-		shd.h[i] = make([]chan int, 1)
-		shd.v[i] = make([]chan int, 1)
+	for i := 0; i < width; i++ {
+		for j := i; j < width; j++ {
+			// Bounded capacity : 1
+			shd.H[i][j] = make(chan int, 1)
+			shd.V[i][j] = make(chan int, 1)
+		}
 	}
 
 	// Finish notifier channel
-	shd.finish = make(chan int, 1)
+	shd.Finish = make(chan int, 1)
 }

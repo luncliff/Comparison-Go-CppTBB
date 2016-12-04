@@ -12,16 +12,16 @@ const (
 	// MaxN ...
 	//  	Problem size
 	// 		Maximum N is (1 << 13)
-	MaxN = 1 << 11
+	MaxN = 1 << 2
 
 	// MaxVP ...
 	//  	Chunk's size
-	MaxVP = 1 << 11
+	MaxVP = 1 << 1
 )
 
 var (
 	cfg Config          // Global Config
-	shd Shared          // Sync data
+	chs Channels        // Shared Channels
 	sw  watch.StopWatch // Stop watch
 )
 
@@ -32,7 +32,7 @@ func init() {
 
 	// Maximize
 	cfg.Init(MaxN, MaxNP, MaxVP)
-	shd.Init(cfg.VP)
+	chs.Init(cfg.VP - 1)
 
 	cfg.Display(os.Stdout)
 }
@@ -40,11 +40,11 @@ func init() {
 func main() {
 	// OBST to calculate
 	tree := obst.NewTree(MaxN)
-	tree.Setup()
+	tree.Init()
 
 	sw.Reset() // Start the timer
 
-	Evaluate(&cfg, &shd, tree) // Process the problem
+	EvaluatePar(&cfg, tree, &chs) // Process the problem
 
 	duration := sw.Pick() // Timer result
 	milisec := duration.Nanoseconds() / 1000000
