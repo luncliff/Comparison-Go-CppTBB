@@ -1,2 +1,2 @@
-# Goroutine-Research
-Personal Research about Goroutine in Golang
+# Comparison of Go and C++ TBB on Parallel Processing 
+
