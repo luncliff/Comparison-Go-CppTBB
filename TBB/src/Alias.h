@@ -1,3 +1,13 @@
+// ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
+//
+//  File     : Alias.h
+//  Author   : Park  Dong Ha ( luncliff@gmail.com )
+//  Updated  : 2016/12/17
+//
+//  Note     :
+//      Alias for primitive types
+//  
+// ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 #ifndef _RESEARCH_ALIAS_H_
 #define _RESEARCH_ALIAS_H_
 

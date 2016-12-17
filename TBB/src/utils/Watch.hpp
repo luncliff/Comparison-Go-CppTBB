@@ -8,13 +8,11 @@
 //      Simple stop watch class
 //
 // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-#ifndef _MAGIC_STOP_WATCH_HPP_
-#define _MAGIC_STOP_WATCH_HPP_
+#ifndef _STOP_WATCH_HPP_
+#define _STOP_WATCH_HPP_
 
 #include <chrono>
 
-namespace magic
-{
     // - Note
     //      Stop watch class.
     //      - `pick()`  : Acquire elapsed time from start
@@ -50,7 +48,5 @@ namespace magic
         }
 
     };
-
-};
 
 #endif

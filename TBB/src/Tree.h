@@ -1,38 +1,66 @@
+// ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
+//
+//  File     : Tree.h
+//  Author   : Park  Dong Ha ( luncliff@gmail.com )
+//  Updated  : 2016/12/17
+//
+//  Note     :
+//      Optimal Binary Search Tree for Dynamic Programming
+//
+//  See also : 
+//      `Matrix<T>`
+//  Reference : 
+//      https://www.cs.auckland.ac.nz/software/AlgAnim/opt_bin.html
+//  
+// ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 #ifndef _RESEARCH_OBST_H_
 #define _RESEARCH_OBST_H_
 
 #include <tuple>
 #include <vector>
 
-#include <tbb/task.h>
+#include "./Alias.h"        // Alias for primitive types
+#include "./utils/Matrix.h" // Custom Matrix for runtime 
 
-#include "./Alias.h"
-#include "./utils/Matrix.h"
+template <typename T>
+using Vector = std::vector<T>;
 
-
-// OBST
+// - Note
+//      Optimal Binary Search Tree for Dynamic Programming
 struct Tree
 {
-    template <typename T>
-    using Vector = std::vector<T>;
+    Vector<f64>  prob;  // Probability of vertices
+    Matrix<f64>  cost;  // Cost matrix
+    Matrix<i64>  root;  // Root index matrix
 
-    Vector<f64>  prob;
-    Matrix<f64>  cost{ prob.size() + 1, prob.size() + 1 };
-    Matrix<i64>  root{ prob.size() + 1, prob.size() + 1 };
-
-    explicit Tree(size_t _size) :
-        prob(_size)
+    // - Note
+    //      Allocate memory for tree
+    //      - prob[ N ]
+    //      - cost[ N+1 ][ N+1 ]
+    //      - root[ N+1 ][ N+1 ]
+    explicit Tree(size_t _n) :
+        prob(_n), 
+        cost{ _n + 1 },
+        root{ _n + 1 }
     {}
 
+    // - Note
+    //      No side effect in the function. 
+    //      Explicit assignment is required after calculation
+    // - Example
+    //      auto tuple = Calculate(tree, R, C);
+    //      tree.root[R][C] = tuple.root;
+    //      tree.cost[R][C] = tuple.cost;
     static 
-    auto Calculate(Tree& _tree, i32 _row, i32 _col) -> std::tuple<i64, f64>
+    auto Calculate(const Tree& _tree, i32 _row, i32 _col) -> std::tuple<i64, f64>
     {
         i64  root{},   best_root = -1;
         f64  weight{}, best_weight = LDBL_MAX;
 
         // Unused range
         if (_row >= _col) {
-            root = -1; weight = 0.0;
+            root = -1; 
+            weight = 0.0;
         }
         // Main diagonal
         else if (_row + 1 == _col) {
@@ -51,47 +79,53 @@ struct Tree
 
                 // Find best weight
                 f64 temp_weight = _tree.cost[_row][i]
-                                  + _tree.cost[i + 1][_col];
+                                  + _tree.cost[ i+1 ][_col];
 
                 if (temp_weight < best_weight) {
                     best_weight = temp_weight;
                     best_root = i + 1;
                 }
             }
-
-            root = best_root;
-            weight = best_weight + sum;
+            root    = best_root;
+            weight  = best_weight + sum;
         }
-
+        // Weight == Cost
         return std::make_tuple(root, weight);
     }
 
+    // - Note
+    //      Number of vertices in tree
     size_t size() const noexcept
     {
         return prob.size();
     }
 };
 
-
+// - Note
+//      Initialize tree's probabilities with random value
 static void Init(Tree& _tree)
 {
     using namespace std;
     using namespace std::chrono;
 
+    // Use epoch time as the seed of random generator
     auto duration = system_clock::now().time_since_epoch();
-    auto seed = static_cast<u32>(duration.count());
+    auto seed     = static_cast<u32>(duration.count());
     mt19937 rnd{ seed };
 
-    f64     sum{};
+    f64     total{};
     for (i32 i = 0; i < _tree.prob.size(); ++i) {
-        sum += _tree.prob[i] = rnd() % (1 << 20);
+        total += _tree.prob[i] = rnd() % (1 << 20);
     }
+    // Normalization
     for (i32 i = 0; i < _tree.prob.size(); ++i) {
-        _tree.prob[i] /= sum;
+        _tree.prob[i] /= total;
     }
 }
 
-
+// - Note
+//      Display the tree in console. 
+//      Used for debugging
 static void Display(const Tree& _tree)
 {
     using namespace std;

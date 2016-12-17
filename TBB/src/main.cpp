@@ -2,10 +2,16 @@
 //
 //  File     : main.cpp
 //  Author   : Park  Dong Ha ( luncliff@gmail.com )
-//  Updated  : 2016/12/05
+//  Updated  : 2016/12/17
 //
 //  Note     :
-//      So tired....
+//      Evaluate Optimal Binary Search Tree problem based on the
+//      command-line options.
+//      - `N`  : Problem size
+//      - `NP` : Number of Processors
+//      - `VP` : Scale of Sub-problems
+//              Small : big  sub-problem, but low  sync cost
+//              Big   : tiny sub-problem, but high sync cost
 //  
 // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 #include <iostream>
@@ -14,47 +20,51 @@
 #include <random>
 #include <thread>
 
-#include <CmdParser.hpp>
+#include <CmdParser.hpp>        // Command Line Parser
 
-#include "./utils/Watch.hpp"
-#include "./Evaluate.hpp"
+#include "./utils/Watch.hpp"    // StopWatch
+#include "./Evaluate.hpp"       // Optimal BST evaluation
 
-using StopWatch = magic::stop_watch<std::chrono::high_resolution_clock>;
+using namespace std;
+using namespace std::chrono;
+using namespace Research;
 
-static void Setup(cli::Parser& _parser);
+// Alias for stop watch class
+using StopWatch = stop_watch<chrono::high_resolution_clock>;
+
+// Parser setup
+static cli::Parser make_parser(int argc, char* argv[]);
+
 
 int main(int argc, char* argv[])
 {
-    using namespace std;
-    using namespace std::chrono;
-    using namespace Research;
-
-    cli::Parser parser{argc, argv};
-    Setup(parser);
-    parser.run_and_exit_if_error(); // Parse the flags
+    cli::Parser p = make_parser(argc, argv);
+    p.run_and_exit_if_error(); // Parse the flags
     
-    // ---- ---- Setup config ---- ---- 
-    bool is_par = (parser.get<std::string>("p") == "true") ? 
+    // ---- ---- Setup configuration ---- ---- 
+    bool parallel = (p.get<std::string>("p") == "true") ? 
                       true : false;
 
     Config  cfg{};
-    cfg.N = parser.get<int>("n");
-    cfg.NP = parser.get<int>("np");
-    cfg.VP = parser.get<int>("vp");
+    {
+        cfg.N  = p.get<int>("n");
+        cfg.NP = p.get<int>("np");
+        cfg.VP = p.get<int>("vp");
 
-    if (is_par == false) {
-        cfg.NP = 1;
+        if (parallel == false) {
+            cfg.NP = 1;
+            cfg.VP = 0;
+        }
+        Display(cfg);
     }
-    Display(cfg);
-
 
     // ---- Construct / Initialize ----
     auto tree = std::make_unique<Tree>(cfg.N);
     Init(*tree);
 
     // ---- ---- Evaluation  ---- ----
-    StopWatch       watch{};
-    if (is_par == true) {
+    StopWatch       watch{};    // Start stop watch
+    if (parallel == true) {
         // Parallel
         EvaluatePar(cfg, *tree);
     }
@@ -64,9 +74,9 @@ int main(int argc, char* argv[])
     }
 
     // ---- ---- Result ---- ----
-    auto dur = watch.pick<milliseconds>();
+    auto dur = watch.pick<milliseconds>();  // Pick stop watch
     printf_s(" [ %10s ] : %8d ms \n",
-            (is_par)? "Parallel" : "Sequential",
+            (parallel)? "Parallel" : "Sequential",
             dur.count());
 
     return EXIT_SUCCESS;
@@ -74,25 +84,29 @@ int main(int argc, char* argv[])
 
 
 
-static void Setup(cli::Parser& _p) 
+static cli::Parser make_parser(int argc, char* argv[])
 {
     using namespace std;
 
-    // Default values...
-    int N = 1 << 11;
-    int NP = thread::hardware_concurrency();
-    int VP = NP*NP;
+    cli::Parser parser{ argc, argv };
+
+    // Fixed size : 2048
+    int N = 1 << 11;    
+    // follow standard
+    int NP = thread::hardware_concurrency();    
+    // Square of NP
+    int VP = NP*NP; 
 
     // Set options...
-    _p.set_optional<int>("n",  "size",     N,
+    parser.set_optional<int>("n",  "size",     N,
                          "Problem's size");
-    _p.set_optional<int>("np", "proc",     NP,
+    parser.set_optional<int>("np", "proc",     NP,
                          "Number of physical processor");
-    _p.set_optional<int>("vp", "chunk",    VP,
+    parser.set_optional<int>("vp", "chunk",    VP,
                          "Sub-problem's size");
-    _p.set_optional<std::string>("p", "parallel", "true",
+    parser.set_optional<string>("p", "parallel", "true",
                           "Parallel execution");
-    return;
+    return parser;
 }
 
 

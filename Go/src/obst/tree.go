@@ -1,3 +1,18 @@
+// ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
+//
+//  File	: tree.go
+//  Author	: Park Dong Ha ( luncliff@gmail.com )
+//  Updated	: 2016/12/17
+//
+// 	Note	:
+//      Optimal Binary Search Tree for Dynamic Programming
+//
+//  See also :
+//      `package matrix`
+//  Reference :
+//      https://www.cs.auckland.ac.nz/software/AlgAnim/opt_bin.html
+//
+// ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 package obst
 
 import (
@@ -12,9 +27,9 @@ import (
 // 		- `root` : [][]int
 //		- `cost` : [][]float64
 type Tree struct {
+	Prob []float64
 	Cost [][]float64
 	Root [][]int
-	Prob []float64
 }
 
 // NewTree ...
@@ -55,18 +70,10 @@ func (tree *Tree) Size() int {
 }
 
 // Calculate ...
-//  	To prevent side effect, explicit assignment is required
-//  	after calculation. Tree won't be modified in the function
-//  	- Receiver
-//  		tree
-//  	- Params
-//  		row
-//  		col
-// 		- Returns
-//  		root
-//  		weight
+//  	To prevent side effect,
+//		explicit assignment is required after calculation.
+// 		Tree won't be modified in the function
 func (tree *Tree) Calculate(row int, col int) (root int, weight float64) {
-
 	var bestWeight float64 = math.MaxFloat64 // Optimal Cost
 	var bestRoot int = -1                    // Optimal Root
 
@@ -96,6 +103,7 @@ func (tree *Tree) Calculate(row int, col int) (root int, weight float64) {
 		// Root : Optimal root index
 		// Cost : Sum of all cost + Additinal weight
 		root, weight = bestRoot, bestWeight+sum
-	} //switch
-	return
+	}
+
+	return // return tuple
 }

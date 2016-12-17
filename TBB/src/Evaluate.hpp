@@ -1,3 +1,15 @@
+// ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
+//
+//  File     : Evaluate.hpp
+//  Author   : Park  Dong Ha ( luncliff@gmail.com )
+//  Updated  : 2016/12/17
+//
+//  Note     :
+//      Evaluate Optimal Binary Search Tree problem.
+//      - `EvaluateSeq` : Sequential processing
+//      - `EvaluatePar` : Parallel processing with Intel TBB
+//  
+// ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 #ifndef _RESEARCH_EVALUATE_HPP_
 #define _RESEARCH_EVALUATE_HPP_
 
@@ -6,6 +18,13 @@
 
 namespace Research
 {
+    // - Note
+    //      Experiment Configuration
+    //      - `N`  : Problem size
+    //      - `NP` : Number of Processors
+    //      - `VP` : Scale of Sub-problems
+    //              Small : big  sub-problem, but low  sync cost
+    //              Big   : tiny sub-problem, but high sync cost
     struct Config
     {
         i32 N, NP, VP;
@@ -25,7 +44,8 @@ namespace Research
     // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 
 
-    // Sequential Evaluation
+    // - Note
+    //      Sequential Evaluation
     static 
     void EvaluateSeq(const Config& cfg, Tree& _tree) noexcept
     {
@@ -50,11 +70,11 @@ namespace Research
         return;
     }
 
-    // Parallel Evaluation
-    //  - Reference
-    //      https://software.intel.com/en-us/node/506110
-    //  - Note
+    // - Note
+    //      Parallel Evaluation
     //      Chained spawning, Explicit task destroy
+    // - Reference
+    //      https://software.intel.com/en-us/node/506110
     static 
     void EvaluatePar(const Config& cfg, Tree& _tree) noexcept
     {
@@ -73,6 +93,11 @@ namespace Research
         const i32 width = N / VP;
         // i, j : Tree matrices' index
         // x, y : Chunks' index
+        // - Range : 
+        //      [ + + + + ]
+        //      [   + + + ]
+        //      [     + + ]
+        //      [       + ]
         for (i32 x = 0, i = 0; x < VP; ++x) {
             for (i32 y = x, j = i + 1; y < VP; ++y)
             {
@@ -80,53 +105,66 @@ namespace Research
                 // Construct task to process task-problem
                 task[x][y] = new(place) ChunkTask{ _tree, i, j, N / VP };
 
-                // Most tasks' ref-counts are 2
+                // Most of ref-counts are 2
                 task[x][y]->set_ref_count(2);
 
-                j += width;
+                j += width; // jump column
             }
-            i += width;
+            i += width; // jump row
         }
 
         // ---- ---- Setup : Relationship ---- ---- ----
         const i32 begin = 0;
-        const i32 end = VP - 1;
+        const i32 end   = VP - 1;
 
-        for (i32 x = begin; x <= end; ++x) {
-
+        for (i32 x = begin; x <= end; ++x) 
+        {
             // Main diagonal tasks have no dependency
-            // make chained for fast spawning
             task[x][x]->set_ref_count(0);
+
+            // Make chained for fast spawning
+            //   -> [ 1       ]     // 1 spawns 2...
+            //      [   2     ]     // 2 spawns 3...
+            //      [     3   ]     // 3 spawns 4...
+            //      [       4 ]     // no spawning
+            // Exclude the last chunk at main diagonal
             if (x < end) {
-                task[x][x]->chain = task[x + 1][x + 1];
+                task[x][x]->chain = task[ x+1 ][ x+1 ];
             }
 
+            // - Dependency
+            //                 t[x-1][y]
+            //                     ^
+            //    t[x][y-1]  >  t[x][y]   > t[x][y+1]
+            //                     ^
+            //                 t[x+1][y]
             for (i32 y = x; y <= end; ++y)
             {
                 static constexpr auto V = 0, H = 1;
-
-                // Vertical/Horizontal successor tasks
-                tbb::task* ver = (x == begin) ? nullptr : task[x - 1][y];
-                tbb::task* hor = (y == end) ? nullptr : task[x][y + 1];
+                // Vertical/Horizontal successor tasks(post set)
+                tbb::task* ver = (x == begin) ? nullptr : task[ x-1 ][ y ];
+                tbb::task* hor = (y == end) ?   nullptr : task[ x ][ y+1 ];
 
                 task[x][y]->post_set[V] = ver;
                 task[x][y]->post_set[H] = hor;
             }
         }
 
-
         // ---- ---- Trigger Execution ---- ---- ----
 
-        // The last task
+        // The last task : top-right end
         tbb::task& last_task = *task[begin][end];
         if (VP > 1) {
-            last_task.increment_ref_count();
+            // When VP > 1, preceding tasks exist. Must wait for them
+            last_task.increment_ref_count();    
             last_task.spawn_and_wait_for_all(*task[0][0]);
         }
-        last_task.execute();
+        // Wait done. execute last task
+        last_task.execute();    
 
         // ---- ---- Clean-Up/Return ---- ---- ----
 
+        // Explicit memory deallocation
         tbb::task::destroy(last_task);
 
         return;

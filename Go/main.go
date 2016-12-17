@@ -1,3 +1,19 @@
+// ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
+//
+//  File     : main.go
+//  Author   : Park  Dong Ha ( luncliff@gmail.com )
+//  Updated  : 2016/12/17
+//
+//  Note     :
+//      Evaluate Optimal Binary Search Tree problem based on the
+//      command-line options.
+//      - `N`  : Problem size
+//      - `NP` : Number of Processors
+//      - `VP` : Scale of Sub-problems
+//              Small : big  sub-problem, but low  sync cost
+//              Big   : tiny sub-problem, but high sync cost
+//
+// ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 package main
 
 import (
@@ -13,10 +29,10 @@ import (
 var (
 	N     int  // Problem's size
 	NP    int  // Number of Physical Processer
-	VP    int  // Chunk(Sub-problem) size
+	VP    int  // Scale of Sub-problems
 	isPar bool // Parallel execution flag
 
-	cfg research.Config // Global Config
+	cfg research.Config // Experiment Configuration
 )
 
 func init() {

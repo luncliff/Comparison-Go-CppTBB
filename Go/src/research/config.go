@@ -1,9 +1,18 @@
-﻿package research
+﻿// ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
+//
+//  File	: config.go
+//  Author	: Park Dong Ha ( luncliff@gmail.com )
+//  Updated	: 2016/12/17
+//
+// 	Note	:
+//		Experiment configuration
+//
+// ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
+package research
 
 import (
 	"fmt"
 	"io"
-	"matrix"
 )
 
 // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
@@ -33,33 +42,4 @@ func (cfg *Config) Display(writer io.Writer) {
 	fmt.Fprintf(writer, "[ Proc ] : %5d \n", cfg.NP)
 	fmt.Fprintf(writer, "[ N    ] : %5d \n", cfg.N)
 	fmt.Fprintf(writer, "[ VP   ] : %5d \n", cfg.VP)
-}
-
-// ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-
-// Channels ...
-//  	Shared channels for synchronization
-type Channels struct {
-	H, V   [][]chan int // Matrix for sync
-	Finish chan int     // Notify finish
-}
-
-// Init ...
-//		Initialize set of shared data
-func (chs *Channels) Init(width int) {
-	// Allocate Horizontal/Vertical channels
-	// Square matrix
-	chs.H = matrix.ChanInt2D(width, width)
-	chs.V = matrix.ChanInt2D(width, width)
-
-	for i := 0; i < width; i++ {
-		for j := i; j < width; j++ {
-			// Bounded capacity : 1
-			chs.H[i][j] = make(chan int, 1)
-			chs.V[i][j] = make(chan int, 1)
-		}
-	}
-
-	// Finish notifier channel
-	chs.Finish = make(chan int, 1)
 }
