@@ -65,22 +65,26 @@ type Dependency struct {
 // Wait ...
 //		Wait for pre-set's notification
 func (rcv *Dependency) Wait() {
-	if rcv.PreSet[0] != nil {
-		<-rcv.PreSet[0]
-	}
+	// Wait vertical channel first
+	// This order is related to EvaluatePar's spawning loop
 	if rcv.PreSet[1] != nil {
 		<-rcv.PreSet[1]
+	}
+	if rcv.PreSet[0] != nil {
+		<-rcv.PreSet[0]
 	}
 }
 
 // Notify ...
 //  	Notify to post-set using channels
 func (rcv *Dependency) Notify() {
-	if rcv.PostSet[0] != nil {
-		rcv.PostSet[0] <- 1
-	}
+	// Wait vertical channel first
+	// This order is related to EvaluatePar's spawning loop
 	if rcv.PostSet[1] != nil {
 		rcv.PostSet[1] <- 1
+	}
+	if rcv.PostSet[0] != nil {
+		rcv.PostSet[0] <- 1
 	}
 }
 
@@ -142,9 +146,11 @@ func EvaluatePar(cfg *Config, tree *obst.Tree) {
 	for x := 0; x < VP-1; x++ {
 		for y := 0; y < VP-1; y++ {
 			relay := chs.H[x][y]
-			// Chunk[x][y] -> H[x][y] -> Chunk[x][y+1]
-			deps[x][y].PostSet[H] = relay  // Chunk[x][y] -> H[x][y]
-			deps[x][y+1].PreSet[H] = relay // H[x][y] -> Chunk[x][y+1]
+			// Tree[x][y] -> H[x][y] -> Tree[x][y+1]
+			// Tree[x][y] -> H[x][y]
+			deps[x][y].PostSet[H] = relay
+			// H[x][y] -> Tree[x][y+1]
+			deps[x][y+1].PreSet[H] = relay
 		}
 	}
 
@@ -152,9 +158,11 @@ func EvaluatePar(cfg *Config, tree *obst.Tree) {
 	for x := 1; x < VP; x++ {
 		for y := 1; y < VP; y++ {
 			relay := chs.V[x-1][y-1]
-			// Chunk[x][y] -> V[x-1][y-1] -> Chunk[x-1][y]
-			deps[x][y].PostSet[V] = relay  // Chunk[x][y] -> V[x-1][y-1]
-			deps[x-1][y].PreSet[V] = relay // V[x-1][y-1] -> Chunk[x-1][y]
+			// Tree[x][y] -> V[x-1][y-1] -> Tree[x-1][y]
+			// Tree[x][y] -> V[x-1][y-1]
+			deps[x][y].PostSet[V] = relay
+			// V[x-1][y-1] -> Tree[x-1][y]
+			deps[x-1][y].PreSet[V] = relay
 		}
 	}
 
