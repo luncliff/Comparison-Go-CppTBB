@@ -1,7 +1,7 @@
 # Comparison of Go and C++ TBB on Parallel Processing 
 
 ## Summary
-This is the personal research about Golang and C++ TBB. 
+This is the personal research about Golang and C++ TBB.   
 Visit the [Wiki](https://github.com/luncliff/Research-Go-Cpp/wiki) for detail.
 
 ## How to test
@@ -19,5 +19,4 @@ For `release` build's execution, `tbb.dll` is necessary.
 ```
 
 ## Reference
- - [Comparing Parallel Performance of Go and C++ TBB on a Direct Acyclic Task Graph Using a Dynamic Programming Problem](https://pdfs.semanticscholar.org/86dd/6361792684cb844ddeda605ae0e0457efc6c.pdf)
-
+ - Doug Serfass, Peiyi Tang. [Comparing parallel performance of Go and C++ TBB on a direct acyclic task graph using a dynamic programming problem](http://dl.acm.org/citation.cfm?id=2184575), 2012 March, ACM
