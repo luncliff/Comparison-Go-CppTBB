@@ -30,27 +30,24 @@ import (
 //		- `cost` : [][]float64
 type Tree struct {
 	Prob []float64
-	Cost [][]float64
-	Root [][]int
+	Cost matrix.Float2D // Float64 2D matrix
+	Root matrix.Int2D   // Int 2D matrix
 }
 
 // NewTree ...
 //		Allocate memory resoureces for Optimal Binary Search Tree
 //  	See also : type `Tree`
 func NewTree(n int) *Tree {
-	res := new(Tree) // allocate
+	res := new(Tree)
 	res.Prob = make([]float64, n)
-
-	res.Root = matrix.Int2D(n+1, n+1)     // `[N+1][N+1]int`
-	res.Cost = matrix.Float642D(n+1, n+1) // `[N+1][N+1]float64`
+	res.Root = matrix.MakeInt2D(n+1, n+1)
+	res.Cost = matrix.MakeFloat2D(n+1, n+1)
 
 	return res
 }
 
 // Init ...
 //  	Setup probabilities of the tree's vertices
-//  	Receiver
-//  		_tree
 func (tree *Tree) Init() {
 	var total float64
 	// Distribute random values
@@ -96,7 +93,7 @@ func (tree *Tree) Calculate(row int, col int) (root int, weight float64) {
 			sum += tree.Prob[i] // Accumulate
 
 			// Find optimized case
-			tempWeight := tree.Cost[row][i] + tree.Cost[i+1][col]
+			tempWeight := *tree.Cost.At(row, i) + *tree.Cost.At(i+1, col)
 			if tempWeight < bestWeight {
 				bestWeight = tempWeight
 				bestRoot = i + 1 // 1-based indexing
@@ -118,12 +115,14 @@ func (lhs *Tree) Copy(rhs *Tree) {
 	}
 	for i := 0; i <= N; i++ {
 		for j := 0; j <= N; j++ {
-			lhs.Root[i][j] = rhs.Root[i][j]
-			lhs.Cost[i][j] = rhs.Cost[i][j]
+			*lhs.Root.At(i, j) = *rhs.Root.At(i, j)
+			*lhs.Cost.At(i, j) = *rhs.Cost.At(i, j)
 		}
 	}
 }
 
+// Equal...
+//  	Check if both tree is equal. Only consider valid indexes
 func (lhs *Tree) Equal(rhs *Tree) bool {
 	// Equal Size?
 	if lhs.Size() != rhs.Size() {
@@ -142,8 +141,8 @@ func (lhs *Tree) Equal(rhs *Tree) bool {
 	// Equal Root & Cost ?
 	for i := 0; i < N; i++ {
 		for j := i + 1; j < N; j++ {
-			equalroot := lhs.Root[i][j] != rhs.Root[i][j]
-			equalcost := lhs.Cost[i][j] != rhs.Cost[i][j]
+			equalroot := *lhs.Root.At(i, j) != *rhs.Root.At(i, j)
+			equalcost := *lhs.Cost.At(i, j) != *rhs.Cost.At(i, j)
 			if equalroot == false || equalcost == false {
 				return false
 			}
@@ -158,7 +157,7 @@ func (tree *Tree) Display(out io.Writer) {
 	for i := 0; i <= N; i++ {
 		for j := 0; j <= N; j++ {
 			fmt.Fprintf(out, " [%2d, %2.2f]",
-				tree.Root[i][j], tree.Cost[i][j])
+				*tree.Root.At(i, j), *tree.Cost.At(i, j))
 		}
 		fmt.Fprintln(out)
 	}

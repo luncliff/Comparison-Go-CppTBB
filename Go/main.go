@@ -79,5 +79,6 @@ func main() {
 			"Sequential", elapsed)
 	}
 
+	// tree.Display(os.Stdout)
 	return
 }

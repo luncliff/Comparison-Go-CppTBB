@@ -48,8 +48,8 @@ func EvaluateSeq(tree *obst.Tree) {
 	for i := N; i >= 0; i-- {
 		for j := i; j <= N; j++ {
 			root, cost := tree.Calculate(i, j)
-			tree.Root[i][j] = root
-			tree.Cost[i][j] = cost
+			*tree.Root.At(i, j) = root
+			*tree.Cost.At(i, j) = cost
 		}
 	}
 	return
@@ -127,8 +127,8 @@ func Chunk(
 		for col := j; col < j+width; col++ {
 
 			root, cost := tree.Calculate(row, col)
-			tree.Root[row][col] = root
-			tree.Cost[row][col] = cost
+			*tree.Root.At(row, col) = root
+			*tree.Cost.At(row, col) = cost
 		}
 	}
 
@@ -168,8 +168,10 @@ func EvaluatePar(tree *obst.Tree, VP int) {
 			// Tree[x][y] -> relay -> Tree[x][y+1]
 			relay := chs.H[x][y]
 
-			deps[x][y].PostSet[H] = relay  // Tree[x][y] -> H[x][y]
-			deps[x][y+1].PreSet[H] = relay // H[x][y] -> Tree[x][y+1]
+			// Tree[x][y] -> H[x][y]
+			deps[x][y].PostSet[H] = relay
+			// H[x][y] -> Tree[x][y+1]
+			deps[x][y+1].PreSet[H] = relay
 		}
 	}
 
@@ -183,8 +185,10 @@ func EvaluatePar(tree *obst.Tree, VP int) {
 			// Tree[x][y] -> relay -> Tree[x-1][y]
 			relay := chs.V[x-1][y-1]
 
-			deps[x][y].PostSet[V] = relay  // Tree[x][y] -> V[x-1][y-1]
-			deps[x-1][y].PreSet[V] = relay // V[x-1][y-1] -> Tree[x-1][y]
+			// Tree[x][y] -> V[x-1][y-1]
+			deps[x][y].PostSet[V] = relay
+			// V[x-1][y-1] -> Tree[x-1][y]
+			deps[x-1][y].PreSet[V] = relay
 		}
 	}
 
