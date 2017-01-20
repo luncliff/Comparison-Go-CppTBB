@@ -38,10 +38,10 @@ struct Tree
     //      - prob[ N ]
     //      - cost[ N+1 ][ N+1 ]
     //      - root[ N+1 ][ N+1 ]
-    explicit Tree(size_t _n) :
-        prob(_n), 
-        cost{ _n + 1 },
-        root{ _n + 1 }
+    explicit Tree(size_t n) :
+        prob(n),
+        cost{ n + 1 },
+        root{ n + 1 }
     {}
 
     // - Note
@@ -144,11 +144,38 @@ static void Display(const Tree& _tree)
         {
             auto root = _tree.root[i][j];
             auto cost = _tree.cost[i][j];
-            printf_s(" [%2d,%2.2lf] ", root, cost);
+            printf_s(" [%2lld,%2.2lf] ", root, cost);
         }
         putchar('\n');
     }
 }
 
+
+static 
+bool operator==(const Tree& lhs, const Tree& rhs) noexcept
+{
+    if (lhs.prob != rhs.prob) {
+        return false;
+    }
+    const i32 N = static_cast<i32>(lhs.size());
+
+    // Compare valid range(x) only.
+    //   [ - x x x ]
+    //   [ - - x x ]
+    //   [ - - - x ]
+    //   [ - - - - ]
+    for (i32 i = 0; i < N; ++i) {
+        for (i32 j = i+1; j < N; ++j) 
+        {
+            const bool equal_root = lhs.root[i][j] != rhs.root[i][j];
+            const bool equal_cost = lhs.cost[i][j] != rhs.cost[i][j];
+            
+            if ( equal_root == false || equal_cost == false){
+                return false;
+            }
+        }
+    }
+    return true;
+}
 
 #endif

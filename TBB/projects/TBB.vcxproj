@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{710DA6C0-A7CE-434D-A3C4-ABD0700B6F39}</ProjectGuid>
     <RootNamespace>TBB</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.10240.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.10586.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -164,6 +164,7 @@
     <ClInclude Include="..\lib\CmdParser\cmdparser.hpp" />
     <ClInclude Include="..\src\Alias.h" />
     <ClInclude Include="..\src\ChunkTask.hpp" />
+    <ClInclude Include="..\src\Config.hpp" />
     <ClInclude Include="..\src\Evaluate.hpp" />
     <ClInclude Include="..\src\Tree.h" />
     <ClInclude Include="..\src\utils\Matrix.h" />

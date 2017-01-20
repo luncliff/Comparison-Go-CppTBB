@@ -29,20 +29,22 @@
 // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 package research
 
-import "obst"
+import (
+	"obst"
+)
 
 // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 
 // EvaluateSeq ...
 //  	Sequential Evaluation
-func EvaluateSeq(cfg *Config, tree *obst.Tree) {
-	N := cfg.N
+func EvaluateSeq(tree *obst.Tree) {
+	N := tree.Size()
 
 	// loop : sequential processing
-	//		[ . . . . ]
-	//		[ 9 . . . ]
-	//		[ 5 6 . . ]
-	//	->	[ 1 2 3 4 ]
+	//		[ 7 8 . . ]
+	//		[ . 4 5 6 ]
+	//		[ . . 2 3 ]
+	//	->	[ . . . 1 ]
 	for i := N; i >= 0; i-- {
 		for j := i; j <= N; j++ {
 			root, cost := tree.Calculate(i, j)
@@ -55,6 +57,12 @@ func EvaluateSeq(cfg *Config, tree *obst.Tree) {
 
 // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 
+// index alias
+const (
+	H int = 0 // Horizontal
+	V int = 1 // Vertical
+)
+
 // Dependency ...
 //  	Set of channels for chunk synchronization
 type Dependency struct {
@@ -64,27 +72,28 @@ type Dependency struct {
 
 // Wait ...
 //		Wait for pre-set's notification
+// 		The order is related to EvaluatePar's spawning loop
 func (rcv *Dependency) Wait() {
 	// Wait vertical channel first
-	// This order is related to EvaluatePar's spawning loop
-	if rcv.PreSet[1] != nil {
-		<-rcv.PreSet[1]
+	if rcv.PreSet[V] != nil {
+		<-rcv.PreSet[V]
 	}
-	if rcv.PreSet[0] != nil {
-		<-rcv.PreSet[0]
+	// Wait horizontal channel
+	if rcv.PreSet[H] != nil {
+		<-rcv.PreSet[H]
 	}
 }
 
 // Notify ...
 //  	Notify to post-set using channels
 func (rcv *Dependency) Notify() {
-	// Wait vertical channel first
-	// This order is related to EvaluatePar's spawning loop
-	if rcv.PostSet[1] != nil {
-		rcv.PostSet[1] <- 1
+	// Notify vertical channel first
+	if rcv.PostSet[V] != nil {
+		rcv.PostSet[V] <- 1
 	}
-	if rcv.PostSet[0] != nil {
-		rcv.PostSet[0] <- 1
+	// Notify horizontal channel
+	if rcv.PostSet[H] != nil {
+		rcv.PostSet[H] <- 1
 	}
 }
 
@@ -102,67 +111,80 @@ func NewDepMatrix(row int, col int) (mat [][]Dependency) {
 }
 
 // Chunk ...
-func Chunk(tree *obst.Tree, i int, j int, width int, dep *Dependency) {
-	dep.Wait() // Wait for preset...
+func Chunk(
+	tree *obst.Tree,
+	i int, j int, width int, dep *Dependency) {
 
-	// loop : sequential processing
+	// 1. Wait for pre-set...
+	dep.Wait()
+
+	// 2. Sequential processing
 	//		[ . . . . ]
 	//		[ 9 . . . ]
-	//		[ 5 6 . . ]
+	//		[ 5 6 7 8 ]
 	//	->	[ 1 2 3 4 ]
-	for row := i + width - 1; row >= i; row-- {
+	for row := i - 1 + width; i <= row; row-- {
 		for col := j; col < j+width; col++ {
+
 			root, cost := tree.Calculate(row, col)
 			tree.Root[row][col] = root
 			tree.Cost[row][col] = cost
 		}
 	}
 
-	dep.Notify() // Notify to postset...
+	// 3. Notify to post-set...
+	dep.Notify()
 }
 
 // EvaluatePar ...
 //  	Parallel processing
-func EvaluatePar(cfg *Config, tree *obst.Tree) {
-	N, VP := cfg.N, cfg.VP
+func EvaluatePar(tree *obst.Tree, VP int) {
+	N := tree.Size()
 
 	// Dependency Matrix for synchronization
 	deps := NewDepMatrix(VP, VP)
-
 	// Shared Channels for sync
 	chs := new(Channels)
 	chs.Init(VP - 1) // Allocate channels
 
-	H, V := 0, 1 // index alias
-
-	// Last chunk's dependency
+	// Final chunk's dependency
 	// This chunk notifies the end of processing
+	//    [ - - - F ]
+	//    [ - - - - ]
+	//    [ - - - - ]
+	//    [ - - - - ]
 	{
 		x, y := 0, VP-1
 		deps[x][y].PostSet[H] = chs.Finish
 	}
 
 	// Horizontal dependecy
+	//    [ H H H - ]
+	//    [ - H H - ]
+	//    [ - - H - ]
+	//    [ - - - - ]
 	for x := 0; x < VP-1; x++ {
 		for y := 0; y < VP-1; y++ {
+			// Tree[x][y] -> relay -> Tree[x][y+1]
 			relay := chs.H[x][y]
-			// Tree[x][y] -> H[x][y] -> Tree[x][y+1]
-			// Tree[x][y] -> H[x][y]
-			deps[x][y].PostSet[H] = relay
-			// H[x][y] -> Tree[x][y+1]
-			deps[x][y+1].PreSet[H] = relay
+
+			deps[x][y].PostSet[H] = relay  // Tree[x][y] -> H[x][y]
+			deps[x][y+1].PreSet[H] = relay // H[x][y] -> Tree[x][y+1]
 		}
 	}
 
 	// Vertical dependecy
+	//    [ - - - - ]
+	//    [ - V V V ]
+	//    [ - - V V ]
+	//    [ - - - V ]
 	for x := 1; x < VP; x++ {
 		for y := 1; y < VP; y++ {
+			// Tree[x][y] -> relay -> Tree[x-1][y]
 			relay := chs.V[x-1][y-1]
-			// Tree[x][y] -> V[x-1][y-1] -> Tree[x-1][y]
-			// Tree[x][y] -> V[x-1][y-1]
-			deps[x][y].PostSet[V] = relay
-			// V[x-1][y-1] -> Tree[x-1][y]
-			deps[x-1][y].PreSet[V] = relay
+
+			deps[x][y].PostSet[V] = relay  // Tree[x][y] -> V[x-1][y-1]
+			deps[x-1][y].PreSet[V] = relay // V[x-1][y-1] -> Tree[x-1][y]
 		}
 	}
 
@@ -170,19 +192,22 @@ func EvaluatePar(cfg *Config, tree *obst.Tree) {
 	width := N / VP
 
 	// Delegate chunks to goroutine
-	for x, i := 0, 0; x < VP; x++ {
-		for y, j := x, 1; y < VP; y++ {
+	for x, i := VP-1, N-width; x >= 0; x-- {
+		for y, j := x, i+1; y < VP; y++ {
 
-			// Make goroutine to process chunk
-			// aware with dependency
+			// Make goroutine to process chunk.
+			// Each chunk is aware of dependency
 			go Chunk(tree, i, j, width, &deps[x][y])
 
 			j += width // jump column
 		}
-		i += width // jump row
+		i -= width // jump row
 	}
 
-	// When last goroutine done. It will notify finish.
+	// Wait for the last goroutine.
+	//  - Makes the dependency matrix alive until the end
+	// See Also : Chunk()
 	<-chs.Finish
+
 	return
 }

@@ -15,41 +15,17 @@
 
 #include "./Alias.h"
 #include "./ChunkTask.hpp"
+#include "./Config.hpp"
 
 namespace Research
 {
-    // - Note
-    //      Experiment Configuration
-    //      - `N`  : Problem size
-    //      - `NP` : Number of Processors
-    //      - `VP` : Scale of Sub-problems
-    //              Small : big  sub-problem, but low  sync cost
-    //              Big   : tiny sub-problem, but high sync cost
-    struct Config
-    {
-        i32 N, NP, VP;
-    };
-
-
-    static void Display(const Config& _cfg)
-    {
-        using namespace std;
-
-        printf_s(" [ Proc ] : %5d\n", _cfg.NP);
-        printf_s(" [ N    ] : %5d\n", _cfg.N);
-        printf_s(" [ VP   ] : %5d\n", _cfg.VP);
-    }
-
-
-    // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-
 
     // - Note
     //      Sequential Evaluation
     static 
-    void EvaluateSeq(const Config& cfg, Tree& _tree) noexcept
+    void EvaluateSeq(Tree& tree) noexcept
     {
-        const i32 N = cfg.N;
+        const i32 N = static_cast<i32>(tree.size());
 
         // loop : bottom-left >>> top-right
         //      [ + + + + ]
@@ -59,12 +35,14 @@ namespace Research
         for (i32 i = N; i >= 0; --i) {
             for (i32 j = i; j <= N; ++j)
             {
-                // Calculate without side-effect
-                auto root_cost = Tree::Calculate(_tree, i, j);
+                std::tie(tree.root[i][j], tree.cost[i][j])
+                    = Tree::Calculate(tree, i, j);
 
-                // Assign result
-                _tree.root[i][j] = std::get<0>(root_cost);
-                _tree.cost[i][j] = std::get<1>(root_cost);
+                // // Calculate without side-effect
+                // auto root_cost = Tree::Calculate(tree, i, j);
+                // // Assign result
+                // tree.root[i][j] = std::get<0>(root_cost);
+                // tree.cost[i][j] = std::get<1>(root_cost);
             }
         }
         return;
@@ -76,13 +54,9 @@ namespace Research
     // - Reference
     //      https://software.intel.com/en-us/node/506110
     static 
-    void EvaluatePar(const Config& cfg, Tree& _tree) noexcept
+    void EvaluatePar(Tree& tree, const i32  VP) noexcept
     {
-        // Delimit number of thread
-        tbb::task_scheduler_init sched_init(cfg.NP);
-
-        const i32  VP = cfg.VP;
-        const i32  N = cfg.N;
+        const i32  N = static_cast<i32>(tree.size());
 
         // Matrix of ChunkTask.
         //  == Task[vp][vp]
@@ -103,7 +77,7 @@ namespace Research
             {
                 auto place = tbb::task::allocate_root();
                 // Construct task to process task-problem
-                task[x][y] = new(place) ChunkTask{ _tree, i, j, N / VP };
+                task[x][y] = new(place) ChunkTask{ tree, i, j, N / VP };
 
                 // Most of ref-counts are 2
                 task[x][y]->set_ref_count(2);

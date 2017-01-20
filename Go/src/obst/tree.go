@@ -107,3 +107,45 @@ func (tree *Tree) Calculate(row int, col int) (root int, weight float64) {
 
 	return // return tuple
 }
+
+func (lhs *Tree) Copy(rhs *Tree) {
+	N := rhs.Size()
+
+	for i := 0; i < N; i++ {
+		lhs.Prob[i] = rhs.Prob[i]
+	}
+	for i := 0; i <= N; i++ {
+		for j := 0; j <= N; j++ {
+			lhs.Root[i][j] = rhs.Root[i][j]
+			lhs.Cost[i][j] = rhs.Cost[i][j]
+		}
+	}
+}
+
+func (lhs *Tree) Equal(rhs *Tree) bool {
+	// Equal Size?
+	if lhs.Size() != rhs.Size() {
+		return false
+	}
+	N := lhs.Size()
+
+	// Equal Probability ?
+	for i := 0; i < N; i++ {
+		if lhs.Prob[i] != rhs.Prob[i] {
+			// log.Println("Different Prob")
+			return false
+		}
+	}
+
+	// Equal Root & Cost ?
+	for i := 0; i < N; i++ {
+		for j := i + 1; j < N; j++ {
+			equalroot := lhs.Root[i][j] != rhs.Root[i][j]
+			equalcost := lhs.Cost[i][j] != rhs.Cost[i][j]
+			if equalroot == false || equalcost == false {
+				return false
+			}
+		}
+	}
+	return true
+}

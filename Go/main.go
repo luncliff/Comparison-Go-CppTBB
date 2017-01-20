@@ -17,7 +17,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"obst"
 	"os"
@@ -27,69 +26,71 @@ import (
 )
 
 var (
-	N     int  // Problem's size
-	NP    int  // Number of Physical Processer
-	VP    int  // Scale of Sub-problems
-	isPar bool // Parallel execution flag
-
-	cfg research.Config // Experiment Configuration
+	parser research.Parser
 )
 
 func init() {
-	// Setup default values...
-	N = 1 << 11
-	NP = runtime.NumCPU() // Maximum core
-	VP = NP * NP
-	isPar = true
-
-	flag.IntVar(&N, "n", N, "Problem's size")
-	flag.IntVar(&NP, "np", NP, "Number of physical processor")
-	flag.IntVar(&VP, "vp", VP, "Sub-problem's size")
-	flag.BoolVar(&isPar, "parallel", isPar, "Parallel execution")
-}
-
-func setup() {
-	if isPar == false {
-		// Sequential execution
-		NP = 1
-	}
-	runtime.GOMAXPROCS(NP)
-
-	cfg.Init(N, NP, VP)
-	cfg.Display(os.Stdout)
+	parser.Init()
 }
 
 func main() {
-	flag.Parse() // Parse the flags
+	// Parse the command flags
+	parser.Parse()
 
-	// ---- Construct / Initialize ----
-	tree := obst.NewTree(N)
+	// ==== ==== Setup configuration  ==== ====
+
+	config := parser.Config()
+	config.Display(os.Stdout)
+
+	// Delimit the number of threads
+	runtime.GOMAXPROCS(config.NP)
+
+	par := parser.Par
+
+	// ==== ==== Construct / Initialize ==== ====
+
+	tree := obst.NewTree(config.N)
 	tree.Init()
 
-	setup() // Apply flags
+	// ==== ==== ==== Evaluation ==== ==== ====
 
-	// ---- ---- Evaluation  ---- ----
-	swatch := new(watch.StopWatch)
-	swatch.Reset()
-	if isPar == true {
-		// Parallel
-		research.EvaluatePar(&cfg, tree)
+	timer := new(watch.StopWatch)
+	timer.Reset()
+
+	if par == true {
+		// Processing + Blocking Garbage Collection
+		research.EvaluatePar(tree, config.VP)
+		runtime.GC()
 	} else {
-		// Sequential
-		research.EvaluateSeq(&cfg, tree)
+		// Processing
+		research.EvaluateSeq(tree)
 	}
 
-	// ---- ---- Result ---- ----
-	duration := swatch.Pick()
-	milisec := duration.Nanoseconds() / 1000000
+	// ==== ==== ==== Result ==== ==== ====
 
-	if isPar {
+	duration := timer.Pick()
+	elapsed := duration.Nanoseconds() / 1000000
+
+	if par == true {
 		fmt.Fprintf(os.Stdout, "[ %10s ] : %8d ms \n",
-			"Parallel", milisec)
+			"Parallel", elapsed)
 	} else {
 		fmt.Fprintf(os.Stdout, "[ %10s ] : %8d ms \n",
-			"Sequential", milisec)
+			"Sequential", elapsed)
 	}
 
 	return
+}
+
+func printTree(t1 *obst.Tree, t2 *obst.Tree) {
+	N := t1.Size()
+
+	for i := 0; i <= N; i++ {
+		for j := 0; j <= N; j++ {
+			fmt.Printf(" [%2d:%2d, %2.2f:%2.2f]",
+				t1.Root[i][j], t2.Root[i][j],
+				t1.Cost[i][j], t2.Cost[i][j])
+		}
+		fmt.Println()
+	}
 }

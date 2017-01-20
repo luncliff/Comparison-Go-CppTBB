@@ -149,6 +149,9 @@
     <ClInclude Include="..\src\Tree.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\Config.hpp">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\main.cpp">
