@@ -45,12 +45,15 @@ type Parser struct {
 	Par bool // Parallel execution flag
 }
 
+// Init...
+//  	Initialize the parser
 func (p *Parser) Init() {
 
 	// Setup default values...
 	p.N = 1 << 11           // 2048
 	p.NP = runtime.NumCPU() // Maximum core
 	p.VP = p.NP * p.NP      // Square of NP
+	p.Par = true
 
 	flag.IntVar(&p.N, "n", p.N, "Problem's size")
 	flag.IntVar(&p.NP, "np", p.NP, "Number of physical processor")
@@ -58,10 +61,14 @@ func (p *Parser) Init() {
 	flag.BoolVar(&p.Par, "parallel", p.Par, "Parallel execution")
 }
 
+// Parse...
+//  	Parse the command argument with flag package
 func (p *Parser) Parse() {
 	flag.Parse() // Parse the flags
 }
 
+// Config...
+//  	Create configuration from the parser's state
 func (p *Parser) Config() (cfg Config) {
 	cfg.N = p.N
 	if p.Par == false {

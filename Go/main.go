@@ -45,7 +45,7 @@ func main() {
 	// Delimit the number of threads
 	runtime.GOMAXPROCS(config.NP)
 
-	par := parser.Par
+	par := parser.Par // parallel
 
 	// ==== ==== Construct / Initialize ==== ====
 
@@ -80,17 +80,4 @@ func main() {
 	}
 
 	return
-}
-
-func printTree(t1 *obst.Tree, t2 *obst.Tree) {
-	N := t1.Size()
-
-	for i := 0; i <= N; i++ {
-		for j := 0; j <= N; j++ {
-			fmt.Printf(" [%2d:%2d, %2.2f:%2.2f]",
-				t1.Root[i][j], t2.Root[i][j],
-				t1.Cost[i][j], t2.Cost[i][j])
-		}
-		fmt.Println()
-	}
 }

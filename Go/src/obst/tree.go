@@ -16,6 +16,8 @@
 package obst
 
 import (
+	"fmt"
+	"io"
 	"math"
 	"math/rand"
 	"matrix"
@@ -148,4 +150,16 @@ func (lhs *Tree) Equal(rhs *Tree) bool {
 		}
 	}
 	return true
+}
+
+func (tree *Tree) Display(out io.Writer) {
+	N := tree.Size()
+
+	for i := 0; i <= N; i++ {
+		for j := 0; j <= N; j++ {
+			fmt.Fprintf(out, " [%2d, %2.2f]",
+				tree.Root[i][j], tree.Cost[i][j])
+		}
+		fmt.Fprintln(out)
+	}
 }

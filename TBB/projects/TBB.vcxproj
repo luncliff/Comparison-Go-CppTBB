@@ -78,6 +78,10 @@
     <OutDir>..\bin\debug\</OutDir>
     <LibraryPath>..\lib\tbb2017\lib\intel64\vc14;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>..\lib\tbb2017\include;..\lib\CmdParser;$(IncludePath)</IncludePath>
+    <LibraryPath>..\lib\tbb2017\bin\intel64\vc14;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -146,7 +150,6 @@
     <None Include="..\lib\tbb2017\lib\intel64\vc14\tbbproxy.pdb" />
     <None Include="..\lib\tbb2017\lib\intel64\vc14\tbbproxy_debug.pdb" />
     <None Include="..\lib\tbb2017\README" />
-    <None Include="..\README.md" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\lib\tbb2017\lib\intel64\vc14\tbb.lib" />

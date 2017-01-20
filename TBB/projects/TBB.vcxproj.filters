@@ -93,7 +93,6 @@
     <None Include="..\lib\tbb2017\bin\intel64\vc14\tbbmalloc_proxy_debug.pdb">
       <Filter>lib\tbb2017\bin\vc14</Filter>
     </None>
-    <None Include="..\README.md" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\lib\tbb2017\lib\intel64\vc14\tbb.lib">
