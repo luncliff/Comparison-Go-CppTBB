@@ -50,7 +50,7 @@ type Parser struct {
 func (p *Parser) Init() {
 
 	// Setup default values...
-	p.N = 1 << 11           // 2048
+	p.N = 1 << 12           // 4096
 	p.NP = runtime.NumCPU() // Maximum core
 	p.VP = p.NP * p.NP      // Square of NP
 	p.Par = true
