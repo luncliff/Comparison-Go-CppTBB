@@ -75,6 +75,7 @@ int main(int argc, char* argv[])
             (par)? "Parallel" : "Sequential",
             elapsed.count());
 
+    //Display(*tree);
     return EXIT_SUCCESS;
 }
 

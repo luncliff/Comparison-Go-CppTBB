@@ -55,7 +55,7 @@ namespace Research
             cli::Parser{ argc,argv }
         {
             
-            int N = 1 << 11;    // Fixed size : 2048
+            int N = 1 << 12;    // Fixed size : 4096
             int NP = std::thread::hardware_concurrency();
             int VP = NP*NP;     // Square of NP
 
