@@ -19,7 +19,6 @@ package main
 import (
 	"fmt"
 	"obst"
-	"os"
 	"research"
 	"runtime"
 	"watch"
@@ -40,12 +39,9 @@ func main() {
 	// ==== ==== Setup configuration  ==== ====
 
 	config := parser.Config()
-	config.Display(os.Stdout)
 
 	// Delimit the number of threads
 	runtime.GOMAXPROCS(config.NP)
-
-	par := parser.Par // parallel
 
 	// ==== ==== Construct / Initialize ==== ====
 
@@ -57,7 +53,7 @@ func main() {
 	timer := new(watch.StopWatch)
 	timer.Reset()
 
-	if par == true {
+	if config.Parallel == true {
 		// Processing + Blocking Garbage Collection
 		research.EvaluatePar(tree, config.VP)
 		runtime.GC()
@@ -71,12 +67,12 @@ func main() {
 	duration := timer.Pick()
 	elapsed := duration.Nanoseconds() / 1000000
 
-	if par == true {
-		fmt.Fprintf(os.Stdout, "[ %10s ] : %8d ms \n",
-			"Parallel", elapsed)
-	} else {
-		fmt.Fprintf(os.Stdout, "[ %10s ] : %8d ms \n",
-			"Sequential", elapsed)
+	{
+		var rep research.Report
+		rep.Config = config
+		rep.Elapsed = elapsed
+
+		fmt.Println(rep.ToJSON())
 	}
 
 	// tree.Display(os.Stdout)

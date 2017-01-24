@@ -40,13 +40,7 @@ int main(int argc, char* argv[])
     // Parse the flags
     parser.run_and_exit_if_error(); 
     Config  config  = parser.config();
-    bool    par     = parser.is_parallel();
 
-    // Delimit the number of threads
-    tbb::task_scheduler_init sched_init(config.NP);
-
-    Display(config);
-  
     // ==== ==== Construct / Initialize ==== ====
 
     // tree : initialized with random probability value
@@ -60,7 +54,10 @@ int main(int argc, char* argv[])
     timer.reset();
 
     // Parallel
-    if (par == true) {
+    if (config.Parallel == true) {
+        // Delimit the number of threads
+        tbb::task_scheduler_init sched_init(config.NP);
+
         EvaluatePar(*tree, config.VP);
     }
     // Sequential 
@@ -71,11 +68,14 @@ int main(int argc, char* argv[])
     // ==== ==== ==== Result  ==== ==== ====
 
     auto elapsed = timer.pick<milliseconds>();  // Pick stop watch
-    printf_s(" [ %10s ] : %8lld ms \n",
-            (par)? "Parallel" : "Sequential",
-            elapsed.count());
+    {
+        Report report{};
+        report.config = config;
+        report.elapsed = elapsed.count();
 
-    //Display(*tree);
+        cout << report << endl; // Print Result
+    }
+
     return EXIT_SUCCESS;
 }
 

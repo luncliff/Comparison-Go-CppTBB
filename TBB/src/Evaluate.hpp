@@ -88,6 +88,7 @@ namespace Research
         }
 
         // ---- ---- Setup : Relationship ---- ---- ----
+
         const i32 begin = 0;
         const i32 end   = VP - 1;
 
@@ -140,7 +141,6 @@ namespace Research
 
         // Explicit memory deallocation
         tbb::task::destroy(last_task);
-
         return;
     }
 

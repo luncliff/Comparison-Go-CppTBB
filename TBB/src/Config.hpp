@@ -28,16 +28,23 @@ namespace Research
     struct Config
     {
         i32 N, NP, VP;
+        bool Parallel;
     };
 
-
-    static void Display(const Config& cfg)
+    // - Note
+    //      Print to stream with JSON format
+    static 
+    std::ostream& operator <<(std::ostream& out, const Config& cfg)
     {
         using namespace std;
+        constexpr char Format[] =
+            "{ \"N\" : %d, \"Proc\" : %d, \"VP\" : %d, \"Parallel\" : %s }";
 
-        printf_s(" [ Proc ] : %5d\n", cfg.NP);
-        printf_s(" [ N    ] : %5d\n", cfg.N);
-        printf_s(" [ VP   ] : %5d\n", cfg.VP);
+        char buf[64]{};
+        sprintf_s(buf, 
+            Format, cfg.N, cfg.NP, cfg.VP, cfg.Parallel? "true": "false");
+
+        return out << buf;
     }
 
 
@@ -51,11 +58,9 @@ namespace Research
 
         // - Note
         //      Parser setup
-        Parser(int argc, char* argv[]) :
-            cli::Parser{ argc,argv }
-        {
-            
-            int N = 1 << 12;    // Fixed size : 4096
+        Parser(int argc, char* argv[]) : cli::Parser{ argc,argv }
+        {            
+            int N = 1 << 11;    // Fixed size : 2048
             int NP = std::thread::hardware_concurrency();
             int VP = NP*NP;     // Square of NP
 
@@ -75,24 +80,41 @@ namespace Research
         {
             Config cfg{};
 
-            cfg.N = this->get<int>("n");
-            cfg.NP = this->get<int>("np");
-            cfg.VP = this->get<int>("vp");
+            cfg.N           = this->get<int>("n");
+            cfg.NP          = this->get<int>("np");
+            cfg.VP          = this->get<int>("vp");
+            cfg.Parallel    = get<std::string>("p") == "true";
 
             // If sequential...
-            if (is_parallel() == false) {
+            if (cfg.Parallel == false) {
                 cfg.NP = 1;
                 cfg.VP = 1;
             }
 
             return cfg;
         }
-
-        bool is_parallel() const noexcept(false)
-        {
-            return get<std::string>("p") == "true";
-        }
     };
+
+
+
+    struct Report
+    {
+        Config  config;     // Configuration
+        i64     elapsed;    // Elapsed time
+    };
+
+    // - Note
+    //      Print to stream with JSON format
+    static
+    std::ostream& operator <<(std::ostream& out, const Report& rep) 
+    {
+        return out
+            << "{ "
+            << "\"Config\" : " << rep.config << ", "
+            << "\"Elapsed\" : " << rep.elapsed
+            << " }";
+    }
+
 
 
 }
