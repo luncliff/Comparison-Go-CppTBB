@@ -60,11 +60,9 @@ func main() {
 
 	// Delimit the number of threads
 	runtime.GOMAXPROCS(config.NP)
+	pprof.StartCPUProfile(cpu)
 
 	// ==== ==== ==== Evaluation ==== ==== ==== ==== ==== ==== ====
-
-	// pprof.WriteHeapProfile(mem) // Tree
-	pprof.StartCPUProfile(cpu)
 
 	timer := new(watch.StopWatch)
 	timer.Reset()
@@ -72,11 +70,9 @@ func main() {
 	// Processing + Blocking Garbage Collection
 	if config.Parallel == true {
 		research.EvaluatePar(tree, config.VP)
-		// pprof.WriteHeapProfile(mem) // Parallel Overhead
-
 		runtime.GC()
-		// pprof.WriteHeapProfile(mem) // After GC
 
+		pprof.WriteHeapProfile(mem) // Profile After GC
 	} else {
 		// Processing
 		research.EvaluateSeq(tree)
