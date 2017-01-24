@@ -46,7 +46,7 @@ type Parser struct {
 	parallel bool // Parallel execution flag
 }
 
-// Init...
+// Init ...
 //  	Initialize the parser
 func (p *Parser) Init() {
 
@@ -62,13 +62,13 @@ func (p *Parser) Init() {
 	flag.BoolVar(&p.parallel, "parallel", p.parallel, "Parallel execution")
 }
 
-// Parse...
+// Parse ...
 //  	Parse the command argument with flag package
 func (p *Parser) Parse() {
 	flag.Parse() // Parse the flags
 }
 
-// Config...
+// Config ...
 //  	Create configuration from the parser's state
 func (p *Parser) Config() (cfg Config) {
 	cfg.N = p.n
