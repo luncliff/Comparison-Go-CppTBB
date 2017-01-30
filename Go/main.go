@@ -20,10 +20,10 @@ import (
 	"flag"
 	"fmt"
 	"obst"
-	"os"
+	_ "os"
 	"research"
 	"runtime"
-	"runtime/pprof"
+	_ "runtime/pprof"
 	"watch"
 )
 
@@ -50,8 +50,8 @@ func main() {
 	// ==== ==== ==== Setup configuration  ==== ==== ==== ==== ====
 
 	config := parser.Config()
-	cpu, _ := os.Create(prof_cpu) // CPU report
-	mem, _ := os.Create(prof_mem) // Memory report
+	// cpu, _ := os.Create(prof_cpu) // CPU report
+	// mem, _ := os.Create(prof_mem) // Memory report
 
 	// ==== ==== ==== Construct / Initialize ==== ==== ==== ====
 
@@ -60,7 +60,7 @@ func main() {
 
 	// Delimit the number of threads
 	runtime.GOMAXPROCS(config.NP)
-	pprof.StartCPUProfile(cpu)
+	// pprof.StartCPUProfile(cpu)
 
 	// ==== ==== ==== Evaluation ==== ==== ==== ==== ==== ==== ====
 
@@ -70,9 +70,10 @@ func main() {
 	// Processing + Blocking Garbage Collection
 	if config.Parallel == true {
 		research.EvaluatePar(tree, config.VP)
-		runtime.GC()
+		// pprof.WriteHeapProfile(mem) // Parallel Processing
 
-		pprof.WriteHeapProfile(mem) // Profile After GC
+		runtime.GC()
+		// pprof.WriteHeapProfile(mem) // After GC
 	} else {
 		// Processing
 		research.EvaluateSeq(tree)
@@ -81,8 +82,8 @@ func main() {
 	// ==== ==== ==== Result ==== ==== ==== ==== ==== ==== ====
 
 	elapsed := timer.Pick().Nanoseconds() / 1000000
-	pprof.StopCPUProfile() // End : CPU profile
-	mem.Close()            // End : Memory profile
+	// pprof.StopCPUProfile() // End : CPU profile
+	// mem.Close()            // End : Memory profile
 	{
 		var rep research.Report
 		rep.Config = config
