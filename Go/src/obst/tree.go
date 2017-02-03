@@ -35,7 +35,7 @@ type Tree struct {
 }
 
 // NewTree ...
-//		Allocate memory resoureces for Optimal Binary Search Tree
+//		Allocate memory resources for Optimal Binary Search Tree
 //  	See also : type `Tree`
 func NewTree(n int) *Tree {
 	res := new(Tree)
