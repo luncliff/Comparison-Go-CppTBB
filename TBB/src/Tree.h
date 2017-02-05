@@ -52,45 +52,41 @@ struct Tree
     //      tree.root[R][C] = tuple.root;
     //      tree.cost[R][C] = tuple.cost;
     static 
-    auto Calculate(const Tree& _tree, i32 _row, i32 _col) -> std::tuple<i64, f64>
+    auto Calculate(const Tree& tree, i32 _row, i32 _col) -> std::tuple<i64, f64>
     {
-        i64  root{},   best_root = -1;
+        i64  best_root = -1;
         f64  weight{}, best_weight = LDBL_MAX;
 
         // Unused range
         if (_row >= _col) {
-            root = -1; 
-            weight = 0.0;
+            weight = 0;
         }
         // Main diagonal
         else if (_row + 1 == _col) {
-            root = _row + 1;
-            weight = _tree.prob[_row];
+            best_root = _row + 1;
+            weight = tree.prob[_row];
         }
         // Tree estimation
         else {
-            // basic weight
-            f64 sum = 0; 
-
+            f64 sum = 0; // basic weight
             for (i32 i = _row; i < _col; ++i)
             {
                 // Accumulate
-                sum += _tree.prob[i];
+                sum += tree.prob[i];
 
                 // Find best weight
-                f64 temp_weight = _tree.cost[_row][i]
-                                  + _tree.cost[ i+1 ][_col];
+                f64 temp_weight =
+                    tree.cost[_row][i] + tree.cost[i + 1][_col];
 
                 if (temp_weight < best_weight) {
                     best_weight = temp_weight;
                     best_root = i + 1;
                 }
             }
-            root    = best_root;
-            weight  = best_weight + sum;
+            weight = best_weight + sum;
         }
         // Weight == Cost
-        return std::make_tuple(root, weight);
+        return std::make_tuple(best_root, weight);
     }
 
     // - Note

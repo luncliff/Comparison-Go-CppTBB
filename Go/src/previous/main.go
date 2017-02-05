@@ -157,9 +157,8 @@ func Chunk(i int, j int) {
 		<-v[i+1][j] // receive from below
 	}
 
-	var bb int
 	for ii := ih; ii >= il; ii-- {
-
+		var bb int
 		if i == j {
 			bb = ii
 		} else {

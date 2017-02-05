@@ -2,9 +2,9 @@
 //
 //  File     : main.cpp
 //  Author   : Park  Dong Ha ( luncliff@gmail.com )
-//  Updated  : 2016/12/17
+//  Updated  : 2017/02/03
 //
-//  Note     :
+//  Note
 //      Evaluate Optimal Binary Search Tree problem based on the
 //      command-line options.
 //      - `N`  : Problem size
@@ -43,20 +43,21 @@ int main(int argc, char* argv[])
 
     // ==== ==== Construct / Initialize ==== ====
 
-    // tree : initialized with random probability value
+    // Optimal Binary Search Tree
+    //      Allocated on heap for memory profiling
     auto tree = std::make_unique<Tree>(config.N);
-    Init(*tree);
+    // Assign random probability value
+    Init(*tree);  
 
     // ==== ==== ==== Evaluation  ==== ==== ====
 
-    // Start stop watch
     StopWatch       timer{};
     timer.reset();
 
     // Parallel
     if (config.Parallel == true) {
         // Delimit the number of threads
-        tbb::task_scheduler_init sched_init(config.NP);
+        tbb::task_scheduler_init scheduler(config.NP);
 
         EvaluatePar(*tree, config.VP);
     }

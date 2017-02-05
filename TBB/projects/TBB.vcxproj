@@ -171,12 +171,14 @@
     <ClInclude Include="..\src\ChunkTask.hpp" />
     <ClInclude Include="..\src\Config.hpp" />
     <ClInclude Include="..\src\Evaluate.hpp" />
+    <ClInclude Include="..\src\previous\DAGTask.hpp" />
     <ClInclude Include="..\src\Tree.h" />
     <ClInclude Include="..\src\utils\Matrix.h" />
     <ClInclude Include="..\src\utils\Watch.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\main.cpp" />
+    <ClCompile Include="..\src\previous\previous.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

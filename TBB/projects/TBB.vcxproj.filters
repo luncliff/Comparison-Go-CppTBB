@@ -28,6 +28,9 @@
     <Filter Include="lib\CmdParser">
       <UniqueIdentifier>{001818ea-8fa4-414c-8776-d9a96e72b9ec}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\previous">
+      <UniqueIdentifier>{8d931a70-1b66-4292-b54c-67c9c2efb1aa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\lib\tbb2017\README">
@@ -151,8 +154,14 @@
     <ClInclude Include="..\src\Config.hpp">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\previous\DAGTask.hpp">
+      <Filter>src\previous</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\previous\previous.cpp">
+      <Filter>src\previous</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\main.cpp">
       <Filter>src</Filter>
     </ClCompile>
