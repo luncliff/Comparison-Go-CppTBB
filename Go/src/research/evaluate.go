@@ -113,7 +113,7 @@ func NewDepMatrix(row int, col int) (mat [][]Dependency) {
 // Chunk ...
 func Chunk(
 	tree *obst.Tree,
-	i int, j int, width int, dep *Dependency) {
+	i int, j int, width int, dep Dependency) {
 
 	// 1. Wait for pre-set...
 	dep.Wait()
@@ -201,7 +201,7 @@ func EvaluatePar(tree *obst.Tree, VP int) {
 
 			// Make goroutine to process chunk.
 			// Each chunk is aware of dependency
-			go Chunk(tree, i, j, width, &deps[x][y])
+			go Chunk(tree, i, j, width, deps[x][y])
 
 			j += width // jump column
 		}

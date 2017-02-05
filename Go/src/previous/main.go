@@ -15,7 +15,7 @@ import (
 const (
 	N  int = 1 << 11
 	VP int = 1 << 11
-	NP int = 8
+	NP int = 1
 
 	Parallel bool = true
 )
