@@ -1,8 +1,8 @@
 // ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
 //
 //  Note
-//      Previous research's implementation 
-//  
+//      Previous research's implementation
+//
 // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 #ifndef _RESEARCH_CHUNK_TASK_HPP_
 #define _RESEARCH_CHUNK_TASK_HPP_
@@ -14,15 +14,15 @@
 
 #include "../research/Tree.h"
 
-static
-void chunk(Tree& tree, int i, int j, int vp, int n)
+static void chunk(Tree &tree, int i, int j, int vp, int n)
 {
-    auto il = (i *(n + 1)) / vp;
-    auto jl = (j *(n + 1)) / vp;
+    auto il = (i * (n + 1)) / vp;
+    auto jl = (j * (n + 1)) / vp;
     auto ih = (((i + 1) * (n + 1)) / vp) - 1;
     auto jh = (((j + 1) * (n + 1)) / vp) - 1;
 
-    for (i32 row = ih; row >= il; --row) {
+    for (i32 row = ih; row >= il; --row)
+    {
         i32 col = (i == j) ? row : jl;
         for (; col <= jh; ++col)
         {
@@ -35,35 +35,39 @@ void chunk(Tree& tree, int i, int j, int vp, int n)
     }
 }
 
-class DagTask : public tbb::task {
-    const int i, j, vp, n; 
-    Tree& tree;
-
-public: 
-    DagTask* successor[2]{};
-    DagTask* a{};
-    //next task of the front 
-    DagTask(Tree& tree, int i_, int j_, int vp_, int n_) :
+class DagTask : 
+    public tbb::task
+{
+    const int i, j, vp, n;
+    Tree &tree;
+  public:
+    DagTask *successor[2]{};
+    DagTask *a{};
+    //next task of the front
+    DagTask(Tree &tree, 
+            int i_, int j_, int vp_, int n_) noexcept :
         tree{tree},
         i(i_), j(j_), vp(vp_), n(n_)
     {}
-    
-    tbb::task* execute() { 
-        if( i==j && i!=vp-1 ) { 
-            //main diagonal 
-            spawn( *a ); //front node 
-        } 
-        
-        chunk(tree, i, j, vp, n); 
-        
-        for (int k = 0; k < 2; ++k) 
+
+    tbb::task *execute()
+    {
+        if (i == j && i != vp - 1)
         {
-            if (DagTask* t = successor[k])
+            //main diagonal
+            spawn(*a); //front node
+        }
+
+        chunk(tree, i, j, vp, n);
+
+        for (int k = 0; k < 2; ++k)
+        {
+            if (DagTask *t = successor[k])
                 if (t->decrement_ref_count() == 0)
                     spawn(*t);
         }
-        return nullptr; 
-    } 
+        return nullptr;
+    }
 };
 
 #endif

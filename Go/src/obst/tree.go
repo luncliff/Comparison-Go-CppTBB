@@ -1,8 +1,6 @@
 // ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
 //
-//  File	: tree.go
-//  Author	: Park Dong Ha ( luncliff@gmail.com )
-//  Updated	: 2016/12/17
+//  Author 	: Park  Dong Ha ( luncliff@gmail.com )
 //
 // 	Note	:
 //      Optimal Binary Search Tree for Dynamic Programming

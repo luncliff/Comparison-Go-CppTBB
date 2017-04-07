@@ -1,10 +1,8 @@
 ﻿// ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
 //
-// 	File	: evaluate.go
 //  Author	: Park Dong Ha ( luncliff@gmail.com )
-//  Updated	: 2016/12/17
 //
-//  Note	:
+// 	Note	:
 //      Evaluate Optimal Binary Search Tree problem.
 //      - `EvaluateSeq` : Sequential processing
 //      - `EvaluatePar` : Parallel processing with Goroutine

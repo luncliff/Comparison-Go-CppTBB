@@ -1,8 +1,6 @@
 ﻿// ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
 //
-//  File	: config.go
 //  Author	: Park Dong Ha ( luncliff@gmail.com )
-//  Updated	: 2016/12/17
 //
 // 	Note	:
 //		Experiment configuration

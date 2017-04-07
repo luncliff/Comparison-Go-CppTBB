@@ -1,10 +1,8 @@
 ﻿// ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
 //
-//  File 	: watch.go
-//  Author 	: Park  Dong Ha ( luncliff@gmail.com )
-//  Updated : 2016/12/17
+//  Author	: Park Dong Ha ( luncliff@gmail.com )
 //
-//  Note 	:
+// 	Note	:
 //		Simple stop watch to calculate elapsed time
 //
 // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
@@ -14,6 +12,8 @@ import (
 	"time"
 )
 
+// StopWatch ...
+//  	Simple stop watch class
 type StopWatch struct {
 	time.Time
 }
@@ -25,7 +25,7 @@ func (watch *StopWatch) Pick() time.Duration {
 	return now.Sub(watch.Time)
 }
 
-// Pick ...
+// Reset ...
 //		Return elapsed time and reset the start point
 func (watch *StopWatch) Reset() time.Duration {
 	span := watch.Pick()
