@@ -13,6 +13,46 @@ Applying concurrent structure and parallel processing are a common issue for the
  
 From the result, the speed-up of Go was higher than the number of cores, and that of TBB was close to it. TBB performed better in general, but for larger scale, Go was partially faster than the other.  
 
+## Directory
+
+
+### `bin/`
+For missing DLL files, you can download them from its [official page](https://www.threadingbuildingblocks.org/).
+
+To execute `release` build result, `tbb.dll` is necessary.   
+Of course, `debug` build required `tbb_debug.dll`. 
+
+### `build/`
+Reserved directory for build result.
+
+### `lib/`
+External libraries
+  - [TBB2017](https://github.com/01org/tbb)
+  - [CmdParser](https://github.com/FlorianRappl/CmdParser)
+
+### `src/`
+Go source files
+
+#### `matrix/`
+Minimal Matrix implementation. Referenced [Carl Johnell's research](http://www.diva-portal.org/smash/get/diva2:824741/FULLTEXT03).
+
+#### `obst/`
+See [Wikipedia](https://en.wikipedia.org/wiki/Optimal_binary_search_tree) or [this link](http://software.ucv.ro/~mburicea/lab5ASD.pdf)
+
+#### `previous/`
+Previous implementation based on ["Comparing parallel performance of Go and C++ TBB on a direct acyclic task graph using a dynamic programming problem"](http://dl.acm.org/citation.cfm?id=2184575&dl=ACM&coll=DL&CFID=748048953&CFTOKEN=40164739).
+
+#### `research/`
+Re-implemented code for this research
+
+#### `utils/`
+Utility classes
+
+#### `watch/`
+Stop watch class over Go Time package
+
+
+
 ## License
 <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
 
