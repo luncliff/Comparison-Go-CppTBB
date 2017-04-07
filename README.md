@@ -13,24 +13,21 @@ Applying concurrent structure and parallel processing are a common issue for the
  
 From the result, the speed-up of Go was higher than the number of cores, and that of TBB was close to it. TBB performed better in general, but for larger scale, Go was partially faster than the other.  
 
+
 ## Directory
 
-
-### `bin/`
+### 1. `bin/`
 For missing DLL files, you can download them from its [official page](https://www.threadingbuildingblocks.org/).
 
 To execute `release` build result, `tbb.dll` is necessary.   
 Of course, `debug` build required `tbb_debug.dll`. 
 
-### `build/`
-Reserved directory for build result.
-
-### `lib/`
+### 2. `lib/`
 External libraries
   - [TBB2017](https://github.com/01org/tbb)
   - [CmdParser](https://github.com/FlorianRappl/CmdParser)
 
-### `src/`
+### 3. `src/`
 Go source files
 
 #### `matrix/`
@@ -51,10 +48,8 @@ Utility classes
 #### `watch/`
 Stop watch class over Go Time package
 
-
-
-## License
-<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
+### 4. `build/`
+Reserved directory for build result.
 
 
 ## How to Try
@@ -67,12 +62,17 @@ The followings are command-line examples. After build, use `-h` for description.
 ```
 
 ### C++ TBB
-For `release` build's execution, DLL binary `tbb.dll` is necessary. 
+
+### Build
+Open `TBB.vcxproj` with Visual Studio 2015 or later, and build with `x64` configuration.
+If several TBB files(`.lib`) are missing, download [TBB release](https://github.com/01org/tbb/releases) binaries.
+
+For execution, DLL binary `tbb.dll` is necessary. You can use it in `bin/` folder, but I recommend to download it.
 See the [official documentation](https://www.threadingbuildingblocks.org/documentation) first.
 ```
  ./TBB.exe -h
  ./TBB.exe -n 2048 -np 4 -vp 128 -p true
 ```
 
-
-
+## License
+<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
