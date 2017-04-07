@@ -1,0 +1,6 @@
+[submodule "TBB/lib/tbb2017"]
+	path = TBB/lib/tbb2017
+	url = https://github.com/01org/tbb
+[submodule "TBB/lib/CmdParser"]
+	path = TBB/lib/CmdParser
+	url = https://github.com/FlorianRappl/CmdParser
