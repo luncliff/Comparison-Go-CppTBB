@@ -1,8 +1,6 @@
 // ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
 //
-//  File     : main.go
 //  Author   : Park  Dong Ha ( luncliff@gmail.com )
-//  Updated  : 2016/12/17
 //
 //  Note     :
 //      Evaluate Optimal Binary Search Tree problem based on the
