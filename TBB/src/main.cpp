@@ -1,8 +1,6 @@
 // ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
 //
-//  File     : main.cpp
 //  Author   : Park  Dong Ha ( luncliff@gmail.com )
-//  Updated  : 2017/02/03
 //
 //  Note
 //      Evaluate Optimal Binary Search Tree problem based on the
@@ -21,15 +19,12 @@
 #include <thread>
 
 #include "./utils/Watch.hpp"    // StopWatch
-#include "./Config.hpp"
-#include "./Evaluate.hpp"       // Optimal BST evaluation
+#include "./research/Config.h"
+#include "./research/Evaluate.h"       // Optimal BST evaluation
 
 using namespace std;
 using namespace std::chrono;
 using namespace Research;
-
-// Alias for stop watch class
-using StopWatch = stop_watch<chrono::high_resolution_clock>;
 
 int main(int argc, char* argv[])
 {

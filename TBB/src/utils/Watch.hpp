@@ -1,11 +1,9 @@
 // ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
 //
-//  File    : Watch.hpp
 //  Author  : Park  Dong Ha ( luncliff@gmail.com )
-//  Updated : 16/09/05
 //
 //  Note
-//      Simple stop watch class
+//      Simple stop watch
 //
 // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 #ifndef _STOP_WATCH_HPP_
@@ -48,5 +46,9 @@
         }
 
     };
+
+
+    // Alias for stop watch class
+    using StopWatch = stop_watch<std::chrono::high_resolution_clock>;
 
 #endif

@@ -1,8 +1,6 @@
 // ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
 //
-//  File     : Matrix.h
 //  Author   : Park  Dong Ha ( luncliff@gmail.com )
-//  Updated  : 2016/12/17
 //
 //  Note     :
 //      Simple matrix abstraction of array.

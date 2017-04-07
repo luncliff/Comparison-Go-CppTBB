@@ -1,8 +1,6 @@
 // ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
 //
-//  File     : ChunkTask.hpp
 //  Author   : Park  Dong Ha ( luncliff@gmail.com )
-//  Updated  : 2016/12/17
 //
 //  Note     :
 //      The sub-problems are grouped to a chunk, and each goroutine

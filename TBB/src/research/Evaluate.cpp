@@ -1,29 +1,10 @@
-// ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
-//
-//  File     : Evaluate.hpp
-//  Author   : Park  Dong Ha ( luncliff@gmail.com )
-//  Updated  : 2016/12/17
-//
-//  Note     :
-//      Evaluate Optimal Binary Search Tree problem.
-//      - `EvaluateSeq` : Sequential processing
-//      - `EvaluatePar` : Parallel processing with Intel TBB
-//  
-// ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-#ifndef _RESEARCH_EVALUATE_HPP_
-#define _RESEARCH_EVALUATE_HPP_
-
-#include "./Alias.h"
-#include "./ChunkTask.hpp"
-#include "./Config.hpp"
+#include "./Evaluate.h"
 
 namespace Research
 {
-
     // - Note
     //      Sequential Evaluation
-    static 
-    void EvaluateSeq(Tree& tree) noexcept
+    void EvaluateSeq(Tree & tree) noexcept
     {
         const i32 N = static_cast<i32>(tree.size());
 
@@ -53,8 +34,7 @@ namespace Research
     //      Chained spawning, Explicit task destroy
     // - Reference
     //      https://software.intel.com/en-us/node/506110
-    static 
-    void EvaluatePar(Tree& tree, const i32  VP) noexcept
+    void EvaluatePar(Tree & tree, const i32 VP) noexcept
     {
         const i32  N = static_cast<i32>(tree.size());
 
@@ -90,9 +70,9 @@ namespace Research
         // ---- ---- Setup : Relationship ---- ---- ----
 
         const i32 begin = 0;
-        const i32 end   = VP - 1;
+        const i32 end = VP - 1;
 
-        for (i32 x = begin; x <= end; ++x) 
+        for (i32 x = begin; x <= end; ++x)
         {
             // Main diagonal tasks have no dependency
             task[x][x]->set_ref_count(0);
@@ -104,7 +84,7 @@ namespace Research
             //      [       4 ]     // no spawning
             // Exclude the last chunk at main diagonal
             if (x < end) {
-                task[x][x]->chain = task[ x+1 ][ x+1 ];
+                task[x][x]->chain = task[x + 1][x + 1];
             }
 
             // - Dependency
@@ -117,8 +97,8 @@ namespace Research
             {
                 static constexpr auto V = 0, H = 1;
                 // Vertical/Horizontal successor tasks(post set)
-                tbb::task* ver = (x == begin) ? nullptr : task[ x-1 ][ y ];
-                tbb::task* hor = (y == end) ?   nullptr : task[ x ][ y+1 ];
+                tbb::task* ver = (x == begin) ? nullptr : task[x - 1][y];
+                tbb::task* hor = (y == end) ? nullptr : task[x][y + 1];
 
                 task[x][y]->post_set[V] = ver;
                 task[x][y]->post_set[H] = hor;
@@ -131,11 +111,11 @@ namespace Research
         tbb::task& last_task = *task[begin][end];
         if (VP > 1) {
             // When VP > 1, preceding tasks exist. Must wait for them
-            last_task.increment_ref_count();    
+            last_task.increment_ref_count();
             last_task.spawn_and_wait_for_all(*task[0][0]);
         }
         // Wait done. execute last task
-        last_task.execute();    
+        last_task.execute();
 
         // ---- ---- Clean-Up/Return ---- ---- ----
 
@@ -143,6 +123,4 @@ namespace Research
         tbb::task::destroy(last_task);
         return;
     }
-
 }
-#endif

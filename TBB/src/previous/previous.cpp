@@ -15,7 +15,7 @@
 #include <thread>
 
 #include "../utils/Watch.hpp"    // StopWatch
-#include "../Config.hpp"
+#include "../research/Config.h"
 #include "./DAGTask.hpp"       // Optimal BST evaluation
 
 using namespace std;
@@ -123,7 +123,7 @@ void EvaluatePar(Tree& tree, u32 vp)
             x[i][i + d]->successor[0] = i - 1 > -1 ? x[i - 1][i + d] : nullptr;// up 
             x[i][i + d]->successor[1] = i + d + 1<vp ? x[i][i + d + 1] : nullptr;// right 
 
-            if (d == 0 && i < vp - 1) //main diagonal 
+            if (d == 0 && static_cast<u32>(i) < vp - 1) //main diagonal 
                 x[i][i + d]->a = x[i + 1][i + 1];
         }
     }

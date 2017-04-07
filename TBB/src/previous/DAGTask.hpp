@@ -1,8 +1,5 @@
 // ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ====
 //
-//  File     : DAGTask.hpp
-//  Updated  : 2017/02/03
-//
 //  Note
 //      Previous research's implementation 
 //  
@@ -15,8 +12,9 @@
 #include <tbb/task.h>
 #include <tbb/task_scheduler_init.h>
 
-#include "../Tree.h"
+#include "../research/Tree.h"
 
+static
 void chunk(Tree& tree, int i, int j, int vp, int n)
 {
     auto il = (i *(n + 1)) / vp;
