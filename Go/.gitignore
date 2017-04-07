@@ -1,9 +1,0 @@
-﻿
-# Visual Studio Code - Go extension settings
-
-src/
-pkg/
-bin/
-.vscode/
-
-debug

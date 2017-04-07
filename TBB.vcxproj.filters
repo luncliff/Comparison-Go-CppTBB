@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{d7c00425-fa18-414e-a025-e07fd35bd527}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib">
+      <UniqueIdentifier>{2d49a5f8-1c4d-4200-9d3c-373aff126d7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\tbb2017">
+      <UniqueIdentifier>{f867d547-d82e-4d6c-8651-9444f7a02e32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\utils">
+      <UniqueIdentifier>{0a6a5de4-faa5-4cff-b05e-55be2d053b69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib\CmdParser">
+      <UniqueIdentifier>{001818ea-8fa4-414c-8776-d9a96e72b9ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\previous">
+      <UniqueIdentifier>{8d931a70-1b66-4292-b54c-67c9c2efb1aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\research">
+      <UniqueIdentifier>{3af6a06d-73bc-4439-8795-fe173223f675}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="lib\CmdParser\cmdparser.hpp">
+      <Filter>lib\CmdParser</Filter>
+    </ClInclude>
+    <ClInclude Include="src\previous\DAGTask.hpp">
+      <Filter>src\previous</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\Matrix.h">
+      <Filter>src\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\Watch.hpp">
+      <Filter>src\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\research\Alias.h">
+      <Filter>src\research</Filter>
+    </ClInclude>
+    <ClInclude Include="src\research\ChunkTask.hpp">
+      <Filter>src\research</Filter>
+    </ClInclude>
+    <ClInclude Include="src\research\Tree.h">
+      <Filter>src\research</Filter>
+    </ClInclude>
+    <ClInclude Include="src\research\Evaluate.h">
+      <Filter>src\research</Filter>
+    </ClInclude>
+    <ClInclude Include="src\research\Config.h">
+      <Filter>src\research</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\previous\previous.cpp">
+      <Filter>src\previous</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\research\Evaluate.cpp">
+      <Filter>src\research</Filter>
+    </ClCompile>
+    <ClCompile Include="src\research\Tree.cpp">
+      <Filter>src\research</Filter>
+    </ClCompile>
+    <ClCompile Include="src\research\Config.cpp">
+      <Filter>src\research</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="lib\tbb2017\lib\intel64\vc14\tbb.lib">
+      <Filter>lib\tbb2017</Filter>
+    </Library>
+  </ItemGroup>
+</Project>
