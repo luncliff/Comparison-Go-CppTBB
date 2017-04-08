@@ -56,12 +56,12 @@ Like previous research, [4, 5] this research uses static optimal binary search t
 
 
 ##### Figure 1 : Knuth's algorithm for the OBST [6]
-![Fig1](/luncliff/Research-Go-Cpp/blob/master/Docs/Images/KnuthOBSTAlgorithm.jpg)  
+![Fig1](./Images/KnuthOBSTAlgorithm.jpg)  
 
 In this case, sub-trees match with sub-problem concept for dynamic programming. Considering larger sub-tree have data dependency to smaller sub-tree. The dependency relation constructs graph and can be reduced like [Figure 2]. [4] Notice that the relation forms directed acyclic graph. Applying task-based algorithm design, each sub-tree becomes task and dependency arrows are synchronization points for them.
 
 ##### Figure 2 : Reduced Graph of Data Dependency
-![Fig2](/luncliff/Research-Go-Cpp/blob/master/Docs/Images/DependencyDAG.jpg)  
+![Fig2](./Images/DependencyDAG.jpg)  
 
 ## 4. Experiment
 ### 4.1 Change in code
@@ -95,7 +95,7 @@ Duration elapsed = t.pick(); // Consider processing scope only
 ### 4.2. Concept
 
 ##### Figure 4 : Problem Concept
-![Fig4](/luncliff/Research-Go-Cpp/blob/master/Docs/Images/ProblemConcepts.jpg)  
+![Fig4](./Images/ProblemConcepts.jpg)  
 
 There are 3 major factors for the program. [Figure 4] shows the implementation view of the target problem. First, `N` is problem size. In [Figure 4], `N` is 12. but notice that the actual memory space usage is `(N+1)*(N+1)` because of dummy (gray dots). These gray dots are out of valid range but inserted for algorithm code's simplification. [4,5]
 
@@ -118,7 +118,7 @@ Simply attaching go keyword, the Goroutine is spawned and managed by Go runtime 
 For instance, when the channel is empty, consumer Goroutines' state becomes waiting. After the Goroutine is parked, scheduler maps another runnable Goroutine to the OS thread. In this procedure, scheduling function uses global scheduler lock to thread-safely map those runnable Goroutines. [8, 9] When the channel is filled, waiting Goroutine is notified and marked as runnable state. 
 
 ##### Figure 5 : Structure of Go Application [8]
-![Fig5](/luncliff/Research-Go-Cpp/blob/master/Docs/Images/GoApp.jpg)  
+![Fig5](./Images/GoApp.jpg)  
 
 ##### Figure 6 : Go implementation
 ```go
@@ -221,8 +221,8 @@ In TBB implementation, each chunk becomes task instances and processed by OS thr
 The execution time is estimated 5 times for each condition and averaged. Timer is implemented with language built-in time library. For unit of time, millisecond was used. In general, TBB performed better than Go and their aspect was quite similar. [Figure 8] is record of execution time with fixed `N=2048` condition. Average time for sequential code was not plotted on chart, but C++ TBB and Go took 6255.4, 12698.6 milliseconds for each.
 
 ##### Figure 8 : Execution Time with `N=2048` (a) Go  (b) C++ TBB 
-![Fig8a](/luncliff/Research-Go-Cpp/blob/master/Docs/Images/GoExecTime2048.jpg)  
-![Fig8b](/luncliff/Research-Go-Cpp/blob/master/Docs/Images/CppExecTime2048.jpg)  
+![Fig8a](./Images/GoExecTime2048.jpg)  
+![Fig8b](./Images/CppExecTime2048.jpg)  
 
 For parallel code, when `NP` was restricted to 1, the performance varies upon VP factor. As `VP` grows, the performance increases until `VP=128`, but starts to decrease after `VP=256`. This is because of parallel code's chunking policy.
 
@@ -267,15 +267,15 @@ When N=2048, the best condition for both language was `NP=4` and `VP=128`. And t
 The following figures shows speed up of parallel code. The value is calculated upon `(Parallel Time)/(Sequential Time)`. However, under SMT (Simultaneous Multi-Threading) environment, their performance dropped as thread context increases.
 
 ##### Figure 10: Go Speed up with `N=4096` (a) Low `VP` (b) High `VP`
-![Fig10a](/luncliff/Research-Go-Cpp/blob/master/Docs/Images/GoSpeedup4096_1.jpg)  
-![Fig10b](/luncliff/Research-Go-Cpp/blob/master/Docs/Images/GoSpeedup4096_2.jpg)  
+![Fig10a](./Images/GoSpeedup4096_1.jpg)  
+![Fig10b](./Images/GoSpeedup4096_2.jpg)  
 Go's speed up was over the linear until `NP` reaches the maximum number of physical processor. When `VP=512`, it achieved best performance. The performance was 6.28 times faster than sequential time. 
 
 
 ##### Figure 11 : TBB Speed up with `N=4096` (a) Low `VP` (b) High `VP`
 
-![Fig11a](/luncliff/Research-Go-Cpp/blob/master/Docs/Images/CppSpeedup4096_1.jpg)  
-![Fig11b](/luncliff/Research-Go-Cpp/blob/master/Docs/Images/CppSpeedup4096_2.jpg)  
+![Fig11a](./Images/CppSpeedup4096_1.jpg)  
+![Fig11b](./Images/CppSpeedup4096_2.jpg)  
 
 Unlike Go, speed up of C++ TBB didn't go over the linear line, but considering its sequential time was much faster than Go, the result fits better for initial part of Amdahl's Law speed-up graph. The best performance was achieved when `VP=256`, and the ratio was 3.95.
 
@@ -286,8 +286,8 @@ With problem size `N=2048`, TBB was always faster than Go. Because of previous i
 But with larger size(`N=4096`), Go was a little bit faster than TBB under their best condition. Go was faster than TBB when `N=4`, `VP=256`, and `VP=512`. Each ratio of them was 1.12 and 1.15. In other words, Go was 15% faster than TBB. 
 
 ##### Figure 12 : Execution Time Ratio with `N=4096` (a) Go/TBB (b) TBB/Go
-![Fig12a](/luncliff/Research-Go-Cpp/blob/master/Docs/Images/RatioGoTBB4096_1.jpg)  
-![Fig12b](/luncliff/Research-Go-Cpp/blob/master/Docs/Images/RatioTBBGo4096_1.jpg)  
+![Fig12a](./Images/RatioGoTBB4096_1.jpg)  
+![Fig12b](./Images/RatioTBBGo4096_1.jpg)  
 
 
 ## 6. Conclusion
@@ -331,7 +331,3 @@ With the latest language/library version, Go's performance improved greatly and 
     2008, Intel Corporation
  1. [Profiling Go Programs](https://blog.golang.org/profiling-go-programs) 
 
-
-
-## Appendix
-All implementation codes and comparison results are opened via [GitHub Repository](https://github.com/luncliff/Research-Go-Cpp).

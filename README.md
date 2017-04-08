@@ -3,6 +3,9 @@
 This is repository for a research code.   
 The C++ code expects Windows developing environment with Visual Studio 2015 or later.
 
+**The paper's copyright is reserved by [KIPS](http://www.kips.or.kr/). 
+[This is draft version](./docs/Draft.md).**
+
 #### Author / Advisor
 [Park Dong-Ha](luncliff@gmail.com) : Dept. of Computer Science & Engineering, Dongguk University 
 #### Advisor
