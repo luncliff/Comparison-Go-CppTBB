@@ -1,9 +1,9 @@
 # Comparison of Go and C++ TBB on Parallel Processing 
 
-This is repository for research codes.   
-C++ codes expects Windows developing environment with Visual Studio 2015 or later.
+This is repository for a research code.   
+The C++ code expects Windows developing environment with Visual Studio 2015 or later.
 
-#### Author
+#### Author / Advisor
 [Park Dong-Ha](luncliff@gmail.com) : Dept. of Computer Science & Engineering, Dongguk University 
 #### Advisor
 Prof. Moon Bong-Kyo : Dept. of Computer Science & Engineering, Dongguk University 
@@ -12,7 +12,6 @@ Prof. Moon Bong-Kyo : Dept. of Computer Science & Engineering, Dongguk Universit
 Applying concurrent structure and parallel processing are a common issue for these day’s programs. In this research, Dynamic Programming is used to compare the parallel performance of Go language and Intel C++ Thread Building Blocks. The experiment was performed on 4 core machine and its result contains execution time under Simultaneous Multi-Threading environment. Static Optimal Binary Search Tree was used as an example. 
  
 From the result, the speed-up of Go was higher than the number of cores, and that of TBB was close to it. TBB performed better in general, but for larger scale, Go was partially faster than the other.  
-
 
 ## Directory
 
