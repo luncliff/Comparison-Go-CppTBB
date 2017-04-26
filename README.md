@@ -6,7 +6,7 @@ The C++ code expects Windows developing environment with Visual Studio 2015 or l
 **The paper's copyright is reserved by [KIPS](http://www.kips.or.kr/). 
 [This is draft version](./docs/Draft.md).**
 
-#### Author / Advisor
+#### Author
 [Park Dong-Ha](luncliff@gmail.com) : Dept. of Computer Science & Engineering, Dongguk University 
 #### Advisor
 Prof. Moon Bong-Kyo : Dept. of Computer Science & Engineering, Dongguk University 
@@ -19,10 +19,10 @@ From the result, the speed-up of Go was higher than the number of cores, and tha
 ## Directory
 
 ### 1. `bin/`
-For missing DLL files, you can download them from its [official page](https://www.threadingbuildingblocks.org/).
+For missing Binary files, you can download them from its [release page](https://github.com/01org/tbb/releases).
 
-To execute `release` build result, `tbb.dll` is necessary.   
-Of course, `debug` build required `tbb_debug.dll`. 
+To build for Windows environment, `tbb.lib`, `tbb_debug.lib` is required. 
+To execute `release` build, `tbb.dll` is necessary. And of course, `debug` build needs `tbb_debug.dll`. 
 
 ### 2. `lib/`
 External libraries
