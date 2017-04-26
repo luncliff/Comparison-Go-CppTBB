@@ -114,7 +114,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>tbb_debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\lib\tbb2017\lib\intel64\vc14\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\lib\tbb2017\lib\intel64\vc14\;</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -148,11 +148,10 @@
       <OptimizeReferences>true</OptimizeReferences>
       <Profile>true</Profile>
       <AdditionalDependencies>tbb.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\lib\tbb2017\lib\intel64\vc14;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\lib\tbb2017\lib\intel64\vc14;</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="lib\CmdParser\cmdparser.hpp" />
     <ClInclude Include="src\previous\DAGTask.hpp" />
     <ClInclude Include="src\research\Alias.h" />
     <ClInclude Include="src\research\ChunkTask.hpp" />
@@ -168,9 +167,6 @@
     <ClCompile Include="src\research\Config.cpp" />
     <ClCompile Include="src\research\Evaluate.cpp" />
     <ClCompile Include="src\research\Tree.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="lib\tbb2017\lib\intel64\vc14\tbb.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
