@@ -6,7 +6,7 @@
 //		Simple stop watch to calculate elapsed time
 //
 // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-package watch
+package main
 
 import (
 	"time"

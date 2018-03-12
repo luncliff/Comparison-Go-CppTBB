@@ -11,7 +11,7 @@
 //      https://www.cs.auckland.ac.nz/software/AlgAnim/opt_bin.html
 //
 // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-package obst
+package main
 
 import (
 	"fmt"

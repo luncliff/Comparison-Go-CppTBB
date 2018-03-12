@@ -6,7 +6,7 @@
 //		Experiment configuration
 //
 // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-package research
+package main
 
 import (
 	"encoding/json"

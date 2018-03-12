@@ -25,7 +25,7 @@
 //          (VP << N)
 //
 // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-package research
+package main
 
 import (
 	"obst"

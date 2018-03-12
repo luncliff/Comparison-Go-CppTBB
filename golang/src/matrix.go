@@ -6,7 +6,7 @@
 //		Simple matrix with go slice
 //
 // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-package matrix
+package main
 
 type resType int
 

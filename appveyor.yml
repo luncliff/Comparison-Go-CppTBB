@@ -15,10 +15,11 @@ configuration:
 before_build:
   - ps: go version
   - ps: MSBuild /version
-
+  
 install:
+  - git submodule update --init --recursive
   - ps: Write-Host $env:PLATFORM $env:CONFIGURATION $env:APPVEYOR_BUILD_FOLDER 
-
+  
 build_script:
   - ps: Write-Host "Under work...";
 

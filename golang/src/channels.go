@@ -6,7 +6,7 @@
 //		Channels for synchronization in parallel evaluation
 //
 // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-package research
+package main
 
 // Channels ...
 //  	Shared channels for synchronization
