@@ -1,6 +1,6 @@
-[submodule "lib/tbb2017"]
-	path = lib/tbb2017
-	url = https://github.com/01org/tbb
-[submodule "lib/CmdParser"]
-	path = lib/CmdParser
+[submodule "cpp/CmdParser"]
+	path = cpp/CmdParser
 	url = https://github.com/FlorianRappl/CmdParser
+[submodule "cpp/tbb"]
+	path = cpp/tbb
+	url = https://github.com/01org/tbb
