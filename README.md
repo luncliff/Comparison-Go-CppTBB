@@ -1,79 +1,90 @@
 # Comparison of Go and C++ TBB on Parallel Processing 
 
-This is repository for a research code.   
-The C++ code expects Windows developing environment with Visual Studio 2015 or later.
-
-**The paper's copyright is reserved by [KIPS](http://www.kips.or.kr/). 
-[This is draft version](./docs/Draft.md).**
-
-#### Author
-[Park Dong-Ha](luncliff@gmail.com) : Dept. of Computer Science & Engineering, Dongguk University 
-#### Advisor
-Prof. Moon Bong-Kyo : Dept. of Computer Science & Engineering, Dongguk University 
+Environment: Windows 10 (x64 bit)
 
 ## Abstract
 Applying concurrent structure and parallel processing are a common issue for these day’s programs. In this research, Dynamic Programming is used to compare the parallel performance of Go language and Intel C++ Thread Building Blocks. The experiment was performed on 4 core machine and its result contains execution time under Simultaneous Multi-Threading environment. Static Optimal Binary Search Tree was used as an example. 
  
 From the result, the speed-up of Go was higher than the number of cores, and that of TBB was close to it. TBB performed better in general, but for larger scale, Go was partially faster than the other.  
 
-## How to Try
-The followings are command-line examples. After build, use `-h` for description.
+## How to Build/Run
 
 ### Go
-#### Build
-Set `GOPATH` and build with `go build` command.
+> Status
 
-#### Execution
-```
- ./Go.exe -h
- ./Go.exe -n=2048 -np=4 -vp=128 -parallel=true
+```sh
+# ...
 ```
 
 ### C++ TBB
-#### Build
-Open `TBB.vcxproj` with Visual Studio 2015 or later, and build with `x64` configuration.
-If several TBB files(`.lib`) are missing, download [TBB release](https://github.com/01org/tbb/releases) binaries.
+> Status
 
-#### Execution
-For execution, DLL binary `tbb.dll` is necessary. You can use it in `bin/` folder, but I recommend to download it.
-See the [official documentation](https://www.threadingbuildingblocks.org/documentation) first.
-```
- ./TBB.exe -h
- ./TBB.exe -n 2048 -np 4 -vp 128 -p true
+```ps1
+# ...
 ```
 
-## Directory
+## Reference
+### Paper/Research
+#### 2015
+ - **[Carl Johnell '15]** Carl Johnell.  
+   [Parallel programming in Go and Scala : A performance comparison](http://www.diva-portal.se/smash/get/diva2:824741/FULLTEXT03.pdf)  
+   2015, Faculty of Computing Blekinge Institute of Technology
 
-### `lib/`
-External C++ libraries
-  - [TBB2017](https://github.com/01org/tbb)
-  - [CmdParser](https://github.com/FlorianRappl/CmdParser)
+#### 2012
+ - **[Neil Deshpande '12]** Neil Deshpande, Erica Sponsler, Nathaniel Weiss.  
+   [Analysis of the Go runtime scheduler](http://www.cs.columbia.edu/~aho/cs6998/reports/12-12-11_DeshpandeSponslerWeiss_GO.pdf)   
+   2012
+ - **[Doug Serfass '12]** Doug Serfass, Peiyi Tang.   
+   [Comparing parallel performance of Go and C++ TBB on a direct acyclic task graph using a dynamic programming problem](http://dl.acm.org/citation.cfm?id=2184575)   
+   March 2012, ACM
+ - **[Ensar Ajkunic '12]** Ensar Ajkunic, Hana Fatkic, Emina Omerovic, Kristina Talic and Novica Nosovic.   
+   [A comparison of five parallel programming models for C++](http://ieeexplore.ieee.org/abstract/document/6240936/)   
+   May 2012, MIPRO
 
-### `previous/`
-Previous implementation based on ["Comparing parallel performance of Go and C++ TBB on a direct acyclic task graph using a dynamic programming problem"](http://dl.acm.org/citation.cfm?id=2184575&dl=ACM&coll=DL&CFID=748048953&CFTOKEN=40164739).
+#### 2010
+ - **[Peiyi Tang '10]** Peiyi Tang.   
+   [Multi-Core Parallel Programming in Go](http://www.ualr.edu/pxtang/papers/acc10.pdf)  
+   Jan 2010, Advanced Computing International Conference 2010
 
-### `research/`
-Re-implemented code for this research
+#### 2008
+ - **[Arch Robison '08]** Arch Robison, Michael Voss, Alexey Kukanov.     
+   [Optimization via Reflection on Work Stealing in TBB](http://ieeexplore.ieee.org/document/4536188/)  
+   2008, Intel Corporation
+   
+#### 2004
+ - **[Vikram Adve '04]** Vikram S. Adve, Mary K. Vernon.  
+   [Parallel Program Performance Prediction Using Deterministic Task Graph Analysis](http://dl.acm.org/citation.cfm?id=966788)  
+   Feb 2004, ACM Transactions on Computer Systems
+   
+### Book
+ - **[Anthony Williams '12]** Anthony Williams.   
+   [C++ Concurrency in Action](https://www.manning.com/books/c-plus-plus-concurrency-in-action)   
+   2012, Manning 
+ - **[Maurice Herlihy '12]**  Maurice Herlihy Nir Shavit.  
+   [The Art of Multiprocessor Programming](http://dl.acm.org/citation.cfm?id=1734069)    
+   2012, Morgan Kaufmann 
 
+### Web Sites
+#### Go Language
+ - [golang.org](https://golang.org/)
+ - [Go GitHub](https://github.com/golang/go)
+ - [A Tour of Go](https://tour.golang.org/welcome/1)
+ - [Memory Model](https://golang.org/ref/mem)
+ - [GC Latency](https://blog.twitch.tv/gos-march-to-low-latency-gc-a6fa96f06eb7#.t6lytzr1q)
+ - [Concurrency Visualization](https://divan.github.io/posts/go_concurrency_visualize/)
+ - [Proposal: Eliminate STW stack re-scanning](https://github.com/golang/proposal/blob/master/design/17503-eliminate-rescan.md)
 
-### `Go/`
-#### - `matrix/`
-Minimal Matrix implementation. Referenced [Carl Johnell's research](http://www.diva-portal.org/smash/get/diva2:824741/FULLTEXT03).
+#### C++ TBB
+ - [Intel C++ Thread Building Blocks](https://www.threadingbuildingblocks.org/)
+ - [How Task Scheduling Works](https://software.intel.com/en-us/node/506103#tutorial_How_Task_Scheduling_Works)
 
-#### - `obst/`
-See [Wikipedia](https://en.wikipedia.org/wiki/Optimal_binary_search_tree) or [this link](http://software.ucv.ro/~mburicea/lab5ASD.pdf)
+#### Blog
+ - [The Go Scheduler](http://morsmachine.dk/go-scheduler)
 
-#### - `watch/`
-Stop watch class over Go Time package
-
-### `TBB/`
-For missing Binary files, you can download them from its [release page](https://github.com/01org/tbb/releases).
-
-To build for Windows environment, `tbb.lib`, `tbb_debug.lib` is required. 
-To execute `release` build, `tbb.dll` is necessary. And of course, `debug` build needs `tbb_debug.dll`. 
-
-#### - `utils/`
-Utility classes
-
-## License
-<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
+#### Others
+ - [TIOBE Programming Community index](http://www.tiobe.com/tiobe-index/)
+ - [Another Go at Language Design](http://web.stanford.edu/class/ee380/Abstracts/100428-pike-stanford.pdf)
+ - [Google Go! A look behind the scenes](http://www.softwareresearch.net/fileadmin/src/docs/teaching/SS10/Sem/Paper__aigner_baumgartner.pdf)
+ - [More Research Problems of Implementing Go](https://talks.golang.org/2014/research2.slide#1)
+ - [Optimal Binary Search Tree](http://software.ucv.ro/~mburicea/lab5ASD.pdf)
+ - [Time warp on the go](http://dl.acm.org/citation.cfm?id=2263057)

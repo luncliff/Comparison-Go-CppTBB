@@ -1,0 +1,28 @@
+version: 2.0.{build}
+
+clone_depth: 1
+
+image: 
+  - Visual Studio 2017
+
+platform: 
+  - x64
+  
+configuration:
+  - Debug
+  - Release
+
+before_build:
+  - ps: go version
+  - ps: MSBuild /version
+
+install:
+  - ps: Write-Host $env:PLATFORM $env:CONFIGURATION $env:APPVEYOR_BUILD_FOLDER 
+
+build_script:
+  - ps: Write-Host "Under work...";
+
+notifications:
+  - provider: Email
+    to:
+      - luncliff@gmail.com
