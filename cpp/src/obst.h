@@ -19,30 +19,30 @@
 #include <chrono>
 #include <random>
 
-#include "./Alias.h"         // Alias for primitive types
-#include "../utils/Matrix.h" // Custom Matrix for runtime
-
-template <typename T>
-using Vector = std::vector<T>;
-
+#include "heap_matrix.hpp"
 // - Note
 //      Optimal Binary Search Tree for Dynamic Programming
-struct Tree
+struct obst
 {
-    Vector<f64> prob; // Probability of vertices
-    Matrix<f64> cost; // Cost matrix
-    Matrix<i64> root; // Root index matrix
+    std::vector<float> prob; // Probability of vertices
+    heap_matrix<int32_t> root;    // Root index matrix
+    heap_matrix<float> cost;    // Cost matrix
 
+public:
     // - Note
     //      Allocate memory for tree
     //      - prob[ N ]
     //      - cost[ N+1 ][ N+1 ]
     //      - root[ N+1 ][ N+1 ]
-    explicit Tree(size_t n) : prob(n),
-                              cost{n + 1},
-                              root{n + 1}
-    {
-    }
+    explicit obst(std::size_t N) noexcept(false);
+    ~obst() noexcept = default;
+
+    // - Note
+    //      Number of vertices in tree
+    size_t size() const noexcept;
+
+    void randomize() noexcept;
+public:
 
     // - Note
     //      No side effect in the function.
@@ -51,24 +51,20 @@ struct Tree
     //      auto tuple = Calculate(tree, R, C);
     //      tree.root[R][C] = tuple.root;
     //      tree.cost[R][C] = tuple.cost;
-    static auto Calculate(const Tree &tree,
-                          i32 _row, i32 _col) noexcept
-        -> std::tuple<i64, f64>;
+    static 
+    auto optimal(const obst& tree,
+                   uint32_t _row, uint32_t _col) noexcept
+        -> std::tuple<int32_t, float>;
 
-    // - Note
-    //      Number of vertices in tree
-    size_t size() const noexcept;
 };
 
-bool operator==(const Tree &lhs, const Tree &rhs) noexcept;
+bool operator==(const obst& lhs, const obst& rhs) noexcept;
+bool operator!=(const obst& lhs, const obst& rhs) noexcept;
 
-// - Note
-//      Initialize tree's probabilities with random value
-void Init(Tree &_tree);
-
-// - Note
-//      Display the tree in console.
-//      Used for debugging
-void Display(const Tree &_tree);
+//
+//// - Note
+////      Display the tree in console.
+////      Used for debugging
+//void Display(const Tree &_tree);
 
 #endif

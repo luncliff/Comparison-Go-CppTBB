@@ -20,8 +20,12 @@ install:
   - git submodule update --init --recursive
   - ps: Write-Host $env:PLATFORM $env:CONFIGURATION $env:APPVEYOR_BUILD_FOLDER 
   
-build_script:
-  - ps: Write-Host "Under work...";
+# build_script:
+#   - ps: Write-Host "Under work...";
+
+build:
+  project: cpp/CppTBB.sln
+  verbosity: minimal
 
 notifications:
   - provider: Email

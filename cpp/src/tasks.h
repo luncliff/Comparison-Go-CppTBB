@@ -21,14 +21,15 @@
 //          (VP << N)
 //
 // ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
-#ifndef _RESEARCH_CHUNK_TASK_HPP_
-#define _RESEARCH_CHUNK_TASK_HPP_
+#ifndef _RESEARCH_TASK_H_
+#define _RESEARCH_TASK_H_
 
 // - Dependency
 //      Intrl C++ Thread Building Blocks
 #include <tbb/task.h>
 #include <tbb/task_scheduler_init.h>
 
+/*
 #include "./Tree.h"
 
 // - Note
@@ -123,4 +124,5 @@ class ChunkTask : public tbb::task
         return nullptr;
     }
 };
-#endif
+*/
+#endif // _RESEARCH_TASK_H_

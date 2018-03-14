@@ -1,35 +1,34 @@
-#include "./Evaluate.h"
+#include "obst.h"
 
-namespace Research
-{
+/*
 // - Note
 //      Sequential Evaluation
-void EvaluateSeq(Tree &tree) noexcept
+void EvaluateSeq(obst& tree) noexcept
 {
-    const i32 N = static_cast<i32>(tree.size());
+    const auto N = tree.size();
 
     // loop : bottom-left >>> top-right
     //      [ + + + + ]
     //      [   + + + ]
     //      [     + + ]
     //   -> [       + ]
-    for (i32 i = N; i >= 0; --i)
+    for (uint32_t r = N; r >= 0; --r)
     {
-        for (i32 j = i; j <= N; ++j)
+        for (uint32_t c = r; c <= N; ++c)
         {
-            std::tie(tree.root[i][j], tree.cost[i][j]) 
-            = Tree::Calculate(tree, i, j);
+            // Calculate without side-effect
+            const auto optimal = obst::optimal(tree, r, c);
 
-            // // Calculate without side-effect
-            // auto root_cost = Tree::Calculate(tree, i, j);
-            // // Assign result
-            // tree.root[i][j] = std::get<0>(root_cost);
-            // tree.cost[i][j] = std::get<1>(root_cost);
+            // Assign result
+            tree.root[r][c] = std::get<0>(optimal);
+            tree.cost[r][c] = std::get<1>(optimal);
         }
     }
     return;
 }
+*/
 
+/*
 // - Note
 //      Parallel Evaluation
 //      Chained spawning, Explicit task destroy
@@ -41,7 +40,7 @@ void EvaluatePar(Tree &tree, const i32 VP) noexcept
 
     // Matrix of ChunkTask.
     //  == Task[vp][vp]
-    Matrix<ChunkTask *> task{static_cast<u32>(VP)};
+    Matrix<ChunkTask *> task{ static_cast<u32>(VP) };
 
     // ---- ---- Construction ---- ---- ----
 
@@ -59,7 +58,7 @@ void EvaluatePar(Tree &tree, const i32 VP) noexcept
         {
             auto place = tbb::task::allocate_root();
             // Construct task to process task-problem
-            task[x][y] = new (place) ChunkTask{tree, i, j, N / VP};
+            task[x][y] = new (place) ChunkTask{ tree, i, j, N / VP };
 
             // Most of ref-counts are 2
             task[x][y]->set_ref_count(2);
@@ -127,4 +126,4 @@ void EvaluatePar(Tree &tree, const i32 VP) noexcept
     tbb::task::destroy(last_task);
     return;
 }
-}
+*/
