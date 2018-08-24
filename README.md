@@ -1,5 +1,8 @@
 # Comparison of Go and C++ TBB on Parallel Processing 
 
+> I stopped updating this repo.   
+> Please reference this [**release**](https://github.com/luncliff/Comparison-Go-CppTBB/commit/d503e5796589cc8a9fb4dc132146082e89162998)
+
 Environment: Windows 10 (x64 bit)
 
 ## Abstract
